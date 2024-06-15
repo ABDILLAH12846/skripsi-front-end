@@ -1,0 +1,37 @@
+{
+  "parser": "@babel/eslint-parser",
+  "requireConfigFile": false,
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "plugins": ["react", "react-hooks"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/camelcase": 0,
+    "@typescript-eslint/no-unused-vars": "warn",
+    "react/prop-types": 0,
+    "space-before-blocks": "warn", // Peringatkan jika tidak ada spasi sebelum blok
+    "space-infix-ops": "warn", // Peringatkan jika tidak ada spasi di sekitar operator
+    "space-before-function-paren": ["warn", "always"]
+    // Tambahkan aturan tambahan sesuai kebutuhan
+  }
+}
