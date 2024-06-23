@@ -43,6 +43,8 @@ export function LoginForm() {
             router.replace('/admin/data-guru')
         } else if (data?.username === "siswa") {
             router.replace('/siswa/profile')
+        } else if (data?.username === "guru") {
+            router.replace('/guru')
         }
     }
 

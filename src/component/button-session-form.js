@@ -8,7 +8,7 @@ export default function ButtonSessionForm({onClick}) {
     return (
             <div className={styles.buttonSession()}>
                 <Button onClick={() => router.back()} variant="outline">Cancel</Button>
-                <Button type="submit" onClick={() => onClick()}>Submit</Button>
+                <Button type="submit" onClick={() => onClick()}>Simpan</Button>
             </div>
     )
 }

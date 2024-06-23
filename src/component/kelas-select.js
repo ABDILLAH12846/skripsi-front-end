@@ -20,7 +20,7 @@ export default function KelasSelect({ onChange, defaultValue }) {
             {
                 data
                     ?
-                    <Select defaultValue={defaultValue ? defaultValue : data[0]} placeholder="Pilih Kelas" style={{width: "100%"}} labelInValue label="Pilih Kelas" options={data} onChange={onChange} size="large"/>
+                    <Select defaultValue={defaultValue ? defaultValue : null} placeholder="Pilih Kelas" style={{width: "100%"}} labelInValue label="Pilih Kelas" options={data} onChange={onChange} size="large"/>
                     :
                     null
             }

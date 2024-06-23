@@ -20,7 +20,7 @@ export default function GuruSelect({ onChange, defaultValue }) {
             {
                 data
                     ?
-                    <Select placeholder="Pilih Guru" defaultValue={defaultValue ? defaultValue : data[0]} style={{width: "100%"}} labelInValue options={data} onChange={onChange} size="large"/>
+                    <Select placeholder="Pilih Guru" defaultValue={defaultValue ? defaultValue : null} style={{width: "100%"}} labelInValue options={data} onChange={onChange} size="large"/>
                     :
                     null
             }
