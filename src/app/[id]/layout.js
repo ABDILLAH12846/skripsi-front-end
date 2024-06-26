@@ -8,24 +8,24 @@ export default function GuruLayout({ children }) {
   const listMenuAdmin = React.useMemo(() => {
     return [
       {
-        title: "Data Guru",
-        link: "/admin/data-guru"
+        title: "Profil",
+        link: "/123456/profil"
       },
       {
-        title: "Data Siswa",
-        link: "/admin/data-siswa"
+        title: "Absensi Siswa",
+        link: "/123456/absensi-siswa"
       },
       {
-        title: "Kelas",
-        link: "/admin/kelas"
+        title: "Nilai Siswa",
+        link: "/123456/nilai-siswa"
       },
       {
-        title: "Mata Pelajaran",
-        link: "/admin/mata-pelajaran"
+        title: "Hafalan Siswa",
+        link: "/123456/mata-pelajaran"
       },
       {
-        title: "Kenaikan Kelas",
-        link: "/admin/kenaikan-kelas"
+        title: "Rapor Siswa",
+        link: "/123456/kenaikan-kelas"
       },
     ]
   }, [])

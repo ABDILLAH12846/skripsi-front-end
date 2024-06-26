@@ -44,7 +44,7 @@ export function LoginForm() {
         } else if (data?.username === "siswa") {
             router.replace('/siswa/profile')
         } else if (data?.username === "guru") {
-            router.replace('/guru')
+            router.replace('/123456')
         }
     }
 
