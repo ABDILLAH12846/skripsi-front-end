@@ -82,7 +82,6 @@ export function TableSemesterDemo({ data, routing, title }) {
                         header: () => <div style={{ width: item === "angka" ? 100 : 300, backgroundColor: "ActiveBorder" }}>"{item}"</div>,
                         cell: ({ row }) => (
                             <>
-                            {console.log({row: row.getValue(item)})}
                                 <div style={{ width: item === "angka" ? 100 : 300, backgroundColor: "ActiveBorder", position: "absolute" }}>{row.getValue(item)}</div>
                             </>
                         ),
@@ -92,7 +91,6 @@ export function TableSemesterDemo({ data, routing, title }) {
         ]
     })
 
-    console.log({ columns })
 
     const [sorting, setSorting] = React.useState([])
     const [columnFilters, setColumnFilters] = React.useState(

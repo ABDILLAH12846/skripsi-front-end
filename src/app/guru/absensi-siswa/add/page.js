@@ -7,18 +7,23 @@ import { Input } from '@/components/ui/input';
 import { useToast } from "@/components/ui/use-toast"
 import { customAlphabet } from 'nanoid';
 import ButtonSessionForm from '@/component/button-session-form';
+import { GlobalContext } from '@/app/layout';
 
 export default function KelolaAbsensi({ params }) {
+  const { user } = React.useContext(GlobalContext)
   const nanoid = customAlphabet('0123456789', 4);
   const { toast } = useToast();
   const notification = (status, title, description) => {
     toast({
-        variant: status ? "outline" : "destructive",
-        title,
-        description,
+      variant: status ? "outline" : "destructive",
+      title,
+      description,
     })
-}
-  const { id } = params;
+  }
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+  const { nip: id } = user.user;
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [initialList, setInitialList] = useState([]);
   const [attendanceArray, setAttendanceArray] = useState([]);
@@ -76,75 +81,75 @@ export default function KelolaAbsensi({ params }) {
 
   const addAbsensi = async (data) => {
     try {
-        const result = await fetch("http://localhost:8000/absensi", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({attendanceData: data.map((val) => ({...val, id_absensi: nanoid()}))})
-        })
-        console.log(result)
-        if (result.ok) {
-            notification(result.ok, "sukses menambahkan", result.statusText)
-            setDisable(false)
-        } else {
-            notification(result.ok, "gagal", result.statusText)
-        }
+      const result = await fetch("http://localhost:8000/absensi", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ attendanceData: data.map((val) => ({ ...val, id_absensi: nanoid() })) })
+      })
+      console.log(result)
+      if (result.ok) {
+        notification(result.ok, "sukses menambahkan", result.statusText)
+        setDisable(false)
+      } else {
+        notification(result.ok, "gagal", result.statusText)
+      }
     } catch (e) {
-        console.log(e)
+      console.log(e)
     } finally {
 
-        // router.back()
+      // router.back()
     }
-}
+  }
 
   const editAbsensi = async (data) => {
     try {
-        const result = await fetch("http://localhost:8000/absensi", {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({attendanceData: data})
-        })
-        console.log(result)
-        if (result.ok) {
-            notification(result.ok, "sukses mengedit", result.statusText)
-            setDisable(false)
-        } else {
-            notification(result.ok, "gagal", result.statusText)
-        }
+      const result = await fetch("http://localhost:8000/absensi", {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ attendanceData: data })
+      })
+      console.log(result)
+      if (result.ok) {
+        notification(result.ok, "sukses mengedit", result.statusText)
+        setDisable(false)
+      } else {
+        notification(result.ok, "gagal", result.statusText)
+      }
     } catch (e) {
-        console.log(e)
+      console.log(e)
     } finally {
 
-        // router.back()
+      // router.back()
     }
-}
-
-const onClick = () => {
-  const findIdNull = attendanceArray.filter((val) => val.id_absensi === null)
-  console.log({findIdNull})
-  console.log(findIdNull.length < attendanceArray.length && findIdNull > 0)
-  if (findIdNull.length < attendanceArray.length && findIdNull.length > 0) {
-    console.log("edit dan tambah")
-    addAbsensi(attendanceArray.filter((val) => val.id_absensi === null))
-    editAbsensi(attendanceArray.filter((val) => val.id_absensi !== null))
-  } else if (findIdNull === attendanceArray.length) {
-    console.log("tambah")
-    addAbsensi(attendanceArray)
-  } else {
-    console.log("edit")
-    editAbsensi(attendanceArray)
   }
-}
+
+  const onClick = () => {
+    const findIdNull = attendanceArray.filter((val) => val.id_absensi === null)
+    console.log({ findIdNull })
+    console.log(findIdNull.length < attendanceArray.length && findIdNull > 0)
+    if (findIdNull.length < attendanceArray.length && findIdNull.length > 0) {
+      console.log("edit dan tambah")
+      addAbsensi(attendanceArray.filter((val) => val.id_absensi === null))
+      editAbsensi(attendanceArray.filter((val) => val.id_absensi !== null))
+    } else if (findIdNull === attendanceArray.length) {
+      console.log("tambah")
+      addAbsensi(attendanceArray)
+    } else {
+      console.log("edit")
+      editAbsensi(attendanceArray)
+    }
+  }
 
   return (
     <div>
-      <Input 
-        type="date" 
-        value={date} 
-        onChange={(val) => setDate(val.target.value)} 
+      <Input
+        type="date"
+        value={date}
+        onChange={(val) => setDate(val.target.value)}
       />
       <h1>Kelola Absensi</h1>
       {initialList.length === 0 ? (

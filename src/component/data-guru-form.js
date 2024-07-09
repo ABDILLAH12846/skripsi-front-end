@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input"
 import { useRouter } from 'next/navigation'
 import { css } from '@/utils/stitches.config'
 import ButtonSessionForm from './button-session-form'
+import { Select } from 'antd'
 
 const formSchema = z.object({
     nip: z.string(),
@@ -37,27 +38,28 @@ const formSchema = z.object({
     jenjang: z.string(),
     jurusan: z.string(),
     statusKepegawaian: z.string(),
+    password: z.string(),
 })
 
 export default function DataGuruForm({ data, action }) {
     const router = useRouter()
     const defaultValues = React.useMemo(() => {
-        console.log({ini: data})
         if (data) {
             return {
-                nip: data?.nip,
-                nuptk: "abcdefghi",
-                nama: "bambank sudarsono",
-                email: "abdikl479@gmail.com",
-                jenisKelamin: "pria",
-                tanggalLahir: new Date(),
-                tempatLahir: "pajak sore",
-                alamat: "dbczzddzzdccdd",
-                noTelepon: "088888888",
-                jabatan: "",
-                jenjang: "z.string()",
-                jurusan: "z.string()",
-                statusKepegawaian: "z.string()",
+                nip: data?.nip.toString(),
+                nuptk: data?.nuptk.toString(),
+                nama: data?.nama,
+                email: data?.email,
+                jenisKelamin: data?.jenis_kelamin,
+                tanggalLahir: new Date(data?.tanggal_lahir).toISOString().split('T')[0],
+                tempatLahir: data?.tempat_lahir,
+                alamat: data?.alamat,
+                noTelepon: data?.no_telepon,
+                jabatan: data?.jabatan,
+                jenjang: data?.jenjang,
+                jurusan: data?.jurusan,
+                statusKepegawaian: data?.status_kepegawaian,
+                password: data?.password,
             }
         }
         return {
@@ -74,6 +76,7 @@ export default function DataGuruForm({ data, action }) {
             jenjang: "",
             jurusan: "",
             statusKepegawaian: "",
+            password: "",
         }
     }, [data])
     const form = useForm({
@@ -96,12 +99,12 @@ export default function DataGuruForm({ data, action }) {
             jenjang: data?.jenjang,
             jurusan: data?.jurusan,
             status_kepegawaian: data?.statusKepegawaian,
+            password: data?.password,
         }
     )
 
     const add = async (data) => {
         try {
-            console.log({ data, body })
             const result = await fetch("http://localhost:8000/guru", {
                 method: "POST",
                 headers: {
@@ -109,9 +112,8 @@ export default function DataGuruForm({ data, action }) {
                 },
                 body: JSON.stringify(body(data))
             })
-            console.log(result)
         } catch (e) {
-            console.log(e)
+
         } finally {
             router.back()
         }
@@ -127,19 +129,40 @@ export default function DataGuruForm({ data, action }) {
                 body: JSON.stringify(body(data))
             })
         } catch (e) {
-            console.log(e)
         } router.back()
     }
 
     const onSubmit = (data) => {
-        console.log(data)
     }
+
+    const genderOptions = [
+        {
+            label: "Perempuan",
+            value: "perempuan",
+        },
+        {
+            label: "Laki-laki",
+            value: "laki-laki",
+        },
+    ];
+    const jabatanOptions = [
+        {
+            label: "Guru Mata Pelajaran",
+            value: "guru mata pelajaran",
+        },
+        {
+            label: "Guru Wali Kelas",
+            value: "guru wali kelas",
+        },
+    ];
+
+
     return (
         <div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className={styles.container()}>
                     {Object.keys(defaultValues).map((value) => (
-                        <div className={styles[value] ? styles[value]() : null} style={{marginBottom: 20}}>
+                        <div className={styles[value] ? styles[value]() : null} style={{ marginBottom: 20 }}>
                             <FormField
                                 control={form.control}
                                 name={value}
@@ -147,7 +170,20 @@ export default function DataGuruForm({ data, action }) {
                                     <FormItem>
                                         <FormLabel>{`${value[0].toUpperCase()}${value.slice(1)}`}</FormLabel>
                                         <FormControl>
-                                            <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                            {
+                                                value === "jenisKelamin"
+                                                    ?
+                                                    <div>
+                                                        <Select placeholder="Jenis Kelamin" style={{ width: "100%" }} size="large" options={genderOptions} onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null} />
+                                                    </div>
+                                                    : value === "jabatan"
+                                                        ?
+                                                        <div>
+                                                            <Select placeholder="Jabatan" style={{ width: "100%" }} size='large' options={jabatanOptions} onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null}/>
+                                                        </div>
+                                                        :
+                                                        <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                            }
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -157,7 +193,7 @@ export default function DataGuruForm({ data, action }) {
                     ))}
                 </form>
             </Form>
-            <ButtonSessionForm onClick={form.handleSubmit((data) => action === "add" ? add(data) : edit(data))}/>
+            <ButtonSessionForm onClick={form.handleSubmit((data) => action === "add" ? add(data) : edit(data))} />
         </div>
     )
 }

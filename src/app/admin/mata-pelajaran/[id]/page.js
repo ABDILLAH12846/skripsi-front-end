@@ -30,7 +30,6 @@ export default function Edit({ params }) {
       router.back()
     }
   }
-  console.log({ data })
   return (
     <div>
       {

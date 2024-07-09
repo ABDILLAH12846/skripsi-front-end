@@ -3,8 +3,21 @@
 import Menu from '@/component/menu'
 import { css } from '@/utils/stitches.config'
 import React from 'react'
+import { GlobalContext } from '../layout'
+import { useRouter } from "next/navigation";
 
 export default function AdminLayout({ children }) {
+  const {user} = React.useContext(GlobalContext)
+  const router = useRouter();
+  React.useEffect(() => {
+    if (user) {
+      if (user.role === "guru"){
+        router.push("/guru/profil");
+      } else if (user.role === "siswa"){
+        router.push("/siswa/profil");
+      }
+    } 
+  }, [])
   const listMenuAdmin = React.useMemo(() => {
     return [
       {
@@ -14,6 +27,10 @@ export default function AdminLayout({ children }) {
       {
         title: "Data Siswa",
         link: "/admin/data-siswa"
+      },
+      {
+        title: "Orang Tua",
+        link: "/admin/orang-tua"
       },
       {
         title: "Kelas",

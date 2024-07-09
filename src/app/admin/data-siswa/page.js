@@ -27,7 +27,6 @@ export default function DataSiswa() {
 
   const onClick = (obj) => {
     const keyVal = Object.keys(obj).find((item) => item === "nis")
-    console.log({ keyVal, baru: obj[keyVal] })
     router.push(`/admin/data-siswa/${obj[keyVal]}`)
   }
   return (

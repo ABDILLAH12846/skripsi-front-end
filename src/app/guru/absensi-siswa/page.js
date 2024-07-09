@@ -1,5 +1,6 @@
 "use client"
 
+import { GlobalContext } from '@/app/layout'
 import SiswaProfile from '@/component/siswa-profile'
 import { DataTableDemo } from '@/component/table'
 import { Button } from '@/components/ui/button'
@@ -8,10 +9,14 @@ import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import React from 'react'
 
-export default function AbsensiSiswa({ params }) {
+export default function AbsensiSiswa() {
+  const { user } = React.useContext(GlobalContext)
+  if (!user) {
+    return <div>Loading...</div>;
+  }
   const router = useRouter();
   const path = usePathname();
-  const { id } = params;
+  const { nip } = user.user;
   const [data, setData] = React.useState(null);
 
   const header = React.useMemo(() => {
@@ -21,13 +26,13 @@ export default function AbsensiSiswa({ params }) {
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`http://localhost:8000/absensi/${id}`);
+      const res = await fetch(`http://localhost:8000/absensi/${nip}`);
       const data = await res.json();
       setData(data);
     }
 
     fetchData();
-  }, []);
+  }, [nip]);
   return (
     <div>
       <div className={styles.header()}>

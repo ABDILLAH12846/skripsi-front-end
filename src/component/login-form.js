@@ -1,11 +1,11 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { useRouter } from "next/navigation"
-
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
@@ -14,39 +14,66 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import React from "react";
+import { GlobalContext } from "@/app/layout";
 
 // Perbarui skema validasi untuk memasukkan validasi password
 const formSchema = z.object({
     username: z.string().min(2, {
         message: "Username must be at least 2 characters.",
     }),
-    password: z.string().min(6, {
-        message: "Password must be at least 6 characters.",
-    }),
-})
+    password: z.string(),
+});
 
 export function LoginForm() {
+    const { user, setUser } = React.useContext(GlobalContext);
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: '',
             password: ''
         },
-    })
+    });
     const router = useRouter();
 
-    const onSubmit = (data) => {
-        console.log(data)
-        if (data?.username === "admin") {
-            router.replace('/admin/data-guru')
-        } else if (data?.username === "siswa") {
-            router.replace('/siswa/profile')
-        } else if (data?.username === "guru") {
-            router.replace('/123456')
+    const onSubmit = async (data) => {
+        try {
+            if (data.username === "admin" && data.password === "admin") {
+                const userTemp = { role: "admin" };
+                setUser(userTemp);
+                Cookies.set("user", JSON.stringify(userTemp), { expires: 1 });
+                router.push("/admin/data-guru");
+            } else {
+                const res = await fetch("http://localhost:8000/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        id: data.username,
+                        password: data.password,
+                    }),
+                });
+                const userTemp = await res.json();
+
+                if (res.ok && userTemp) {
+                    setUser(userTemp);
+                    Cookies.set("user", JSON.stringify(userTemp), { expires: 1 });
+                    if (userTemp.role === "guru") {
+                        router.push("/guru/profil");
+                    } else {
+                        router.push("/siswa/profil");
+                    }
+                } else {
+                    setUser(null);
+                }
+            }
+        } catch (e) {
+            console.log(e);
         }
-    }
+    };
 
     return (
         <Form {...form}>
@@ -83,5 +110,5 @@ export function LoginForm() {
                 <Button type="submit">Submit</Button>
             </form>
         </Form>
-    )
+    );
 }
