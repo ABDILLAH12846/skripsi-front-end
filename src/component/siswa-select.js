@@ -2,18 +2,15 @@ import React from 'react'
 import { Drawer, Space, Checkbox, Divider } from 'antd';
 import { Button } from "antd"
 import { useController, useFormContext } from "react-hook-form";
+import { css } from '@/utils/stitches.config';
 
-export default function SiswaSelect({ isDisabled, list, chaval, setChaval}) {
-    // console.log({defaultValues, list})
+export default function SiswaSelect({ isDisabled, list, chaval, setChaval }) {
     const [open, setOpen] = React.useState(false)
     const onClose = () => {
         setOpen(false);
     };
-    // const [chaval, setChaval] = React.useState(defaultValues)
-    console.log({ chaval })
 
     const onChange = (act, val) => {
-        console.log(act, chaval.map((el) => ({el: el.nisn === val.nisn})), chaval.filter((el) => el !== val))
         act ? setChaval([...chaval, val]) : setChaval(chaval.filter((el) => el.nisn !== val.nisn))
     }
 
@@ -31,13 +28,54 @@ export default function SiswaSelect({ isDisabled, list, chaval, setChaval}) {
                             <Checkbox value={val}>{val.nama}</Checkbox>
                         ))}
                     </CheckboxGroup> */}
-                    {
-                        list.map((val) => (
-                            <Checkbox defaultChecked={chaval.find((el) => el.nisn === val.nisn)} onChange={(e) => onChange(e.target.checked, val)}>{val.nama}</Checkbox>
-                        ))
-                    }
+                    <div className={styles.container()}>
+                        <div className={styles.wrapper()}>
+                            <div className={styles.nisnJudul()}>nisn</div>
+                            <div>nama</div>
+                        </div>
+                        {
+                            list.map((val) => (
+                                <Checkbox defaultChecked={chaval.find((el) => el.nisn === val.nisn)} onChange={(e) => onChange(e.target.checked, val)} className={styles.selectBox()}>
+                                    <div className={styles.wrapper()}>
+                                        <div className={styles.nisn()}>{val.nisn}</div>
+                                        <div>{val.nama}</div>
+                                    </div>
+                                </Checkbox>
+                            ))
+                        }
+                    </div>
                 </>
             </Drawer>
         </div>
     )
+}
+
+const styles = {
+    container: css({
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: 20,
+        // backgroundColor: "Bisque",
+    }),
+    selectBox: css({
+        display: "flex",
+        width: "100%",
+        // backgroundColor: "Azure",
+    }),
+    nisn: css({
+        width: "100px",
+        // backgroundColor: "Aqua",
+        display: "flex",
+    }),
+    wrapper: css({
+        width: "100%",
+        // backgroundColor: "Brown",
+        display: "flex",
+    }),
+    nisnJudul: css({
+        width: 120,
+        display: "flex",
+        justifyContent: "center",
+    })
 }

@@ -38,7 +38,7 @@ export default function Edit({ params }) {
   return (
     <div>
       <div className={styles.header()}>
-        <div className={styles.title()}>Data Siswa : {data?.[0].nama}</div>
+        {/* <div className={styles.title()}>Data Siswa : {data?.[0].nama}</div> */}
         <div className={styles.btnBox()}>
           <DeleteButton handleDelete={handleDelete}/>
           <Button assChild className={styles.btn()} onClick={() => router.push(`${path}/${data[0]?.nisn}`)}>Edit</Button>

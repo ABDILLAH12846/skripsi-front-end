@@ -51,7 +51,6 @@ export default function MataPelajaranForm({ data, action }) {
         }
     }, [data])
 
-    console.log({defaultValues, data})
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues
@@ -68,7 +67,6 @@ export default function MataPelajaranForm({ data, action }) {
 
     const add = async (data) => {
         try {
-            console.log({ data, body })
             const result = await fetch("http://localhost:8000/mata-pelajaran", {
                 method: "POST",
                 headers: {
@@ -76,9 +74,7 @@ export default function MataPelajaranForm({ data, action }) {
                 },
                 body: JSON.stringify(body(data))
             })
-            console.log(result)
         } catch (e) {
-            console.log(e)
         } finally {
             router.back()
         }
@@ -94,14 +90,12 @@ export default function MataPelajaranForm({ data, action }) {
                 body: JSON.stringify(body(data))
             })
         } catch (e) {
-            console.log(e)
         } router.back()
     }
 
     
 
     const onSubmit = (data) => {
-        console.log(data)
     }
     return (
         <div>

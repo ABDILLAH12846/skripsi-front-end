@@ -1,38 +1,48 @@
 "use client"
 
-import SiswaProfile from '@/component/siswa-profile'
 import { DataTableDemo } from '@/component/table'
 import { Button } from '@/components/ui/button'
 import { css } from '@/utils/stitches.config'
-import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import React from 'react'
 
-export default function Profile({ params }) {
-  const { id } = params;
+export default function OrangTua() {
+  const router = useRouter();
+  const path = usePathname();
+  const header = React.useMemo(() => {
+    return ["Nama","alamat", "no_telepon",]
+  }, [])
   const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`http://localhost:8000/guru/${id}`);
+      const res = await fetch('http://localhost:8000/orangtua');
       const data = await res.json();
       setData(data);
     }
 
     fetchData();
   }, []);
+
+  const onClick = (obj) => {
+    const keyVal = Object.keys(obj).find((item) => item === "id_orangtua")
+    router.push(`/admin/orang-tua/edit?idOrtu=${obj[keyVal]}`)
+  }
   return (
     <div>
       <div className={styles.header()}>
-        <div className={styles.title()}>Profil</div>
+        <div className={styles.title()}>Daftar Kelas SMA IT AL IZZAH</div>
+        <Button assChild className={styles.btn()} onClick={() => router.push(`${path}/add`)}>Tambah</Button>
       </div>
-      {
-        data
-        ?
-        <SiswaProfile data={data} />
-        :
-        null
-      }
+      <div>
+        {
+          data
+            ?
+            <DataTableDemo data={data} routing={onClick} header={header} />
+            :
+            null
+        }
+      </div>
     </div>
   )
 }
@@ -54,32 +64,5 @@ const styles = {
   }),
   btn: css({
     backgroundColor: "ActiveText"
-  }),
-  content: css({
-    display: "flex",
-    gap: 30,
-  }),
-  leftProfile: css({
-    border: "1.5px solid #124A4B",
-    display: "flex",
-    flexDirection: "column",
-    padding: 20,
-    borderRadius: 20,
-    gap: 20,
-    width: "20%"
-  }),
-  leftProfileContent: css({
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
-  }),
-  listValue: css({
-    display: "flex",
-    flexDirection: "column"
-  }),
-  righContent: css({
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
   })
 }

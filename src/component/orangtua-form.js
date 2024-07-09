@@ -21,18 +21,18 @@ import ButtonSessionForm from './button-session-form'
 import { DataTableDemo } from './table'
 import SiswaSelect from './siswa-select'
 import GuruSelect from './guru-select'
-import { Select } from 'antd'
 
 const formSchema = z.object({
-    nomorKelas: z.string(),
-    namaKelas: z.string(),
-    waliKelas: z.string(),
-    tahunAjaran: z.string(),
+    namaOrangTua: z.string(),
+    alamat: z.string(),
+    noTelepon: z.string(),
+    pekerjaan: z.string(),
+    gaji: z.string(),
 })
 
-export default function KelasForm({ data, dataSiswa }) {
+export default function OrangTuaForm({ data, dataSiswa }) {
     const { toast } = useToast()
-    console.log("data kelas", data)
+
     const nanoid = customAlphabet('0123456789', 4);
 
     const notification = (status, title, description) => {
@@ -70,20 +70,22 @@ export default function KelasForm({ data, dataSiswa }) {
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
-                idKelas: data.id_kelas,
-                nomorKelas: data?.no_kelas.toString(),
-                namaKelas: data?.nama_kelas,
-                waliKelas: data?.wali_kelas,
-                tahunAjaran: data?.tahun_ajaran,
+                idOrangTua: data.id_orangtua,
+                namaOrangTua: data?.nama_orangtua,
+                alamat: data?.alamat,
+                noTelepon: data?.no_telepon,
+                pekerjaan: data?.pekerjaan,
+                gaji: data?.gaji,
                 daftarSiswa: data?.daftar_siswa,
             }
         }
         return {
-            idKelas: nanoid(),
-            nomorKelas: "",
-            namaKelas: "",
-            waliKelas: "",
-            tahunAjaran: "",
+            idOrangTua: nanoid(),
+            namaOrangTua: "",
+            alamat: "",
+            noTelepon: "",
+            pekerjaan: "",
+            gaji: "",
             daftarSiswa: [],
         }
     }, [data])
@@ -97,11 +99,11 @@ export default function KelasForm({ data, dataSiswa }) {
 
     const body = (data) => (
         {
-            nisn: data?.nisn,
-            nama_kelas: data?.namaKelas,
-            nip: data?.waliKelas,
-            no_kelas: data?.nomorKelas,
-            tahun_ajaran: data?.tahunAjaran,
+            nama: data?.namaOrangTua,
+            alamat: data?.alamat,
+            no_telepon: data?.noTelepon,
+            pekerjaan: data?.pekerjaan,
+            gaji: data?.gaji,
         }
     )
     const datas = defaultValues.daftarSiswa.map((val) => {
@@ -115,19 +117,19 @@ export default function KelasForm({ data, dataSiswa }) {
 
     const bodyDaftarSiswa = () => (
         {
-            id_kelas: defaultValues?.idKelas,
+            id_orangtua: defaultValues.idOrangTua,
             nisn_list: chaval.length < defaultValues.daftarSiswa.length ? datas : chaval.map((val) => ({ nisn: val.nisn, kelas: true })),
         }
     )
 
-    const addKelas = async (data) => {
+    const addOrangTua = async (data) => {
         try {
-            const result = await fetch("http://localhost:8000/kelas", {
+            const result = await fetch("http://localhost:8000/orangtua", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ ...body(data), id_kelas: nanoid() })
+                body: JSON.stringify({...body(data), id_orangtua: defaultValues?.idOrangTua,})
             })
             if (result.ok) {
                 notification(result.ok, "sukses", result.statusText)
@@ -141,14 +143,14 @@ export default function KelasForm({ data, dataSiswa }) {
             // router.back()
         }
     }
-    const editKelas = async (dataKelas) => {
+    const editOrangTua = async (data) => {
         try {
-            const result = await fetch(`http://localhost:8000/kelas/${data.id_kelas}`, {
+            const result = await fetch(`http://localhost:8000/orangtua/${defaultValues?.idOrangTua}`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(body(dataKelas))
+                body: JSON.stringify(body(data))
             })
             if (result.ok) {
                 notification(result.ok, "sukses", result.statusText)
@@ -164,12 +166,12 @@ export default function KelasForm({ data, dataSiswa }) {
     }
     const addDaftarSiswa = async (data) => {
         try {
-            const result = await fetch("http://localhost:8000/siswa", {
+            const result = await fetch("http://localhost:8000/orangtuasiswa", {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(bodyDaftarSiswa(data))
+                body: JSON.stringify(bodyDaftarSiswa())
             })
             if (result.ok) {
                 notification(result.ok, "sukses", result.statusText)
@@ -183,22 +185,7 @@ export default function KelasForm({ data, dataSiswa }) {
             // router.back()
         }
     }
-
-    const kelasOptions = [
-        {
-            label: "10",
-            value: "10",
-        },
-        {
-            label: "11",
-            value: "11",
-        },
-        {
-            label: "12",
-            value: "12",
-        },
-    ]
-
+    
     if (!dataSiswa) {
         return <p>Loading</p>
     }
@@ -206,7 +193,7 @@ export default function KelasForm({ data, dataSiswa }) {
         <div>
             <Form {...form}>
                 <form onSubmit={() => { }} className={styles.container()}>
-                    {Object.keys(defaultValues).filter((val) => val !== "daftarSiswa" && val !== "idKelas").map((value) => (
+                    {Object.keys(defaultValues).filter((val) => val !== "daftarSiswa" && val !== "idOrangTua").map((value) => (
                         <div className={styles[value] ? styles[value]() : null} style={{ marginBottom: 20 }}>
                             <FormField
                                 control={form.control}
@@ -218,12 +205,9 @@ export default function KelasForm({ data, dataSiswa }) {
                                             {
                                                 value === "waliKelas"
                                                     ?
-                                                    <GuruSelect onChange={(val) => field.onChange(val.value.toString())} defaultValue={field.value} />
-                                                    : value === "nomorKelas"
-                                                        ?
-                                                        <Select style={{ width: "100%" }} options={kelasOptions} placeholder="Pilih Kelas" size="large" onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null} />
-                                                        :
-                                                        <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                                    <GuruSelect onChange={(val) => field.onChange(val.value.toString())} />
+                                                    :
+                                                    <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
                                             }
                                         </FormControl>
                                         <FormMessage />
@@ -234,7 +218,7 @@ export default function KelasForm({ data, dataSiswa }) {
                     ))}
                 </form>
             </Form>
-            <ButtonSessionForm onClick={form.handleSubmit(data ? editKelas : addKelas)} />
+            <ButtonSessionForm onClick={form.handleSubmit(data ? editOrangTua : addOrangTua)} />
             <SiswaSelect isDisabled={!disable || data ? false : true} defaultValues={chaval} list={dataSiswa.map((val) => ({ nisn: val.nisn, nama: val.nama }))} formValue={formValue} chaval={chaval} setChaval={setChaval} />
             {
                 chaval.length > 0

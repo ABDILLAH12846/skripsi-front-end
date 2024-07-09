@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input"
 import { css } from '@/utils/stitches.config'
 import { useRouter } from 'next/navigation'
 import ButtonSessionForm from './button-session-form'
+import { Select } from 'antd'
 
 const formSchema = z.object({
     nis: z.string(),
@@ -81,7 +82,7 @@ export default function DataSiswaForm({ data, action }) {
             no_telepon: data?.noTelepon,
         }
     )
-    
+
     const edit = async (data) => {
         try {
             await fetch(`http://localhost:8000/siswa/${data?.nisn}`, {
@@ -92,13 +93,11 @@ export default function DataSiswaForm({ data, action }) {
                 body: JSON.stringify(body(data))
             })
         } catch (e) {
-            console.log(e)
         } router.back()
     }
 
     const add = async (data) => {
         try {
-            console.log({ data, body })
             const result = await fetch("http://localhost:8000/siswa", {
                 method: "POST",
                 headers: {
@@ -106,13 +105,22 @@ export default function DataSiswaForm({ data, action }) {
                 },
                 body: JSON.stringify(body(data))
             })
-            console.log(result)
         } catch (e) {
-            console.log(e)
         } finally {
             router.back()
         }
     }
+
+    const genderOptions = [
+        {
+            label: "Perempuan",
+            value: "perempuan",
+        },
+        {
+            label: "Laki-laki",
+            value: "laki-laki",
+        },
+    ]
 
     return (
         <div>
@@ -125,10 +133,17 @@ export default function DataSiswaForm({ data, action }) {
                                 name={value}
                                 render={({ field }) => (
                                     <FormItem>
-                                        {/* {console.log(typeof(field?.value), field.value)} */}
                                         <FormLabel>{`${value[0].toUpperCase()}${value.slice(1)}`}</FormLabel>
                                         <FormControl>
-                                            <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                            {
+                                                value === "jenisKelamin"
+                                                    ?
+                                                    <div>
+                                                        <Select placeholder="Jenis Kelamin" style={{ width: "100%" }} size="large" options={genderOptions} onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null} />
+                                                    </div>
+                                                    :
+                                                    <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                            }
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

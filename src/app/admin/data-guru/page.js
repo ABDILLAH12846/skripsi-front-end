@@ -27,7 +27,6 @@ export default function DataGuru() {
 
   const onClick = (obj) => {
     const keyVal = Object.keys(obj).find((item) => item === "nip")
-    console.log({ keyVal, baru: obj[keyVal] })
     router.push(`/admin/data-guru/${obj[keyVal]}`)
   }
   return (

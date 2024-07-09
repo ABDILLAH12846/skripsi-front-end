@@ -1,0 +1,83 @@
+"use client"
+
+import React from 'react'
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { customAlphabet } from 'nanoid';
+import ButtonSessionForm from './button-session-form';
+import { InputNumber, Select } from 'antd';
+import { surah } from '@/const/const';
+import { css } from '@/utils/stitches.config';
+
+export default function HafalanInput({ data }) {
+    console.log({ data })
+    const dataSurah = data?.hafalan.split(" ayat ")
+    console.log({ dataSurah })
+    const nanoid = customAlphabet('0123456789', 4);
+    const [suroh, setSuroh] = React.useState(dataSurah[0] ? dataSurah[0] : surah[0].surah)
+    const [ayat, setAyat] = React.useState(dataSurah[1] ? dataSurah[1] : 1 )
+    console.log(suroh.length, surah[2].surah.length)
+
+    const add = async () => {
+        try {
+            const result = await fetch("http://localhost:8000/hafalan", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_hafalan: nanoid(),
+                    nisn: data.nisn,
+                    bulan: data.bulan,
+                    minggu: data.minggu,
+                    hafalan: `${suroh} ayat ${ayat}`,
+
+                })
+            })
+        } catch (e) {
+        }
+    }
+
+    const edit = async () => {
+        try {
+            await fetch(`http://localhost:8000/hafalan/${data?.id_hafalan}`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nisn: data.nisn,
+                    bulan: data.bulan,
+                    minggu: data.minggu,
+                    hafalan: `${suroh} ayat ${ayat}`,
+
+                })
+            })
+        } catch (e) {
+            console.log({e})
+        }
+    }
+
+    console.log({ suroh: `${suroh} ${ayat}` })
+
+    return (
+        <div>
+            <Label>{data?.label}</Label>
+            <div className={styles.container()}>
+                <Select style={{width: "100%"}} size='large' defaultValue={suroh} options={surah.map((val) => ({ label: val.surah, value: val.surah }))} onChange={(val) => setSuroh(val)} />
+                <InputNumber style={{width: 200}} size='large' min={1} max={suroh ? surah.find((val) => val.surah === suroh).ayat : 10} onChange={(val) => setAyat(val)} defaultValue={ayat}/>
+            </div>
+            <ButtonSessionForm onClick={() => data?.id_hafalan ? edit() : add()} />
+        </div>
+    )
+}
+
+const styles = {
+    container: css({
+        width: "100%",
+        // backgroundColor: "ActiveText",
+        display: "flex",
+        gap: 10,
+        marginBottom: 10,
+    })
+}

@@ -9,23 +9,23 @@ export default function GuruLayout({ children }) {
     return [
       {
         title: "Profil",
-        link: "/123456/profil"
+        link: "/guru/profil"
       },
       {
         title: "Absensi Siswa",
-        link: "/123456/absensi-siswa"
+        link: "/guru/absensi-siswa"
       },
       {
         title: "Nilai Siswa",
-        link: "/123456/nilai-siswa"
+        link: "/guru/nilai-siswa"
       },
       {
         title: "Hafalan Siswa",
-        link: "/123456/mata-pelajaran"
+        link: "/guru/hafalan-siswa"
       },
       {
         title: "Rapor Siswa",
-        link: "/123456/kenaikan-kelas"
+        link: "/guru/rapor-siswa"
       },
     ]
   }, [])

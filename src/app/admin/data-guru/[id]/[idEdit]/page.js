@@ -10,7 +10,6 @@ export default function Edit({params}) {
     async function fetchData() {
       const res = await fetch(`http://localhost:8000/guru/${params.idEdit}`);
       const data = await res.json();
-      console.log({data})
       setData(data);
     }
 
