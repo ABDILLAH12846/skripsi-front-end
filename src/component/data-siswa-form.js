@@ -34,6 +34,7 @@ const formSchema = z.object({
         message: "Alamat harus 8 huruf"
     }),
     noTelepon: z.string(),
+    password: z.string(),
 })
 
 export default function DataSiswaForm({ data, action }) {
@@ -50,6 +51,7 @@ export default function DataSiswaForm({ data, action }) {
                 tempatLahir: data?.tempat_lahir,
                 alamat: data?.alamat,
                 noTelepon: data?.no_telepon,
+                password: data?.password,
             }
         }
         return {
@@ -62,6 +64,7 @@ export default function DataSiswaForm({ data, action }) {
             tempatLahir: "",
             alamat: "",
             noTelepon: "",
+            password: "",
         }
     }, [data])
     const form = useForm({
@@ -80,6 +83,7 @@ export default function DataSiswaForm({ data, action }) {
             tempat_lahir: data?.tempatLahir,
             alamat: data?.alamat,
             no_telepon: data?.noTelepon,
+            password: data?.password,
         }
     )
 

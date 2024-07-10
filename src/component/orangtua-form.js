@@ -21,6 +21,8 @@ import ButtonSessionForm from './button-session-form'
 import { DataTableDemo } from './table'
 import SiswaSelect from './siswa-select'
 import GuruSelect from './guru-select'
+import { Select } from 'antd'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
     namaOrangTua: z.string(),
@@ -31,7 +33,8 @@ const formSchema = z.object({
 })
 
 export default function OrangTuaForm({ data, dataSiswa }) {
-    const { toast } = useToast()
+    const { toast } = useToast() 
+    const router = useRouter()
 
     const nanoid = customAlphabet('0123456789', 4);
 
@@ -44,6 +47,10 @@ export default function OrangTuaForm({ data, dataSiswa }) {
     }
 
     const [disable, setDisable] = React.useState(true)
+    const [status, setStatus] = React.useState(data ? data.status : null)
+    const [final, setFinal] = React.useState(true);
+
+    console.log({data})
 
     // const daftarSiswa = [
     //     {
@@ -76,6 +83,7 @@ export default function OrangTuaForm({ data, dataSiswa }) {
                 noTelepon: data?.no_telepon,
                 pekerjaan: data?.pekerjaan,
                 gaji: data?.gaji,
+                status: data?.status,
                 daftarSiswa: data?.daftar_siswa,
             }
         }
@@ -86,6 +94,7 @@ export default function OrangTuaForm({ data, dataSiswa }) {
             noTelepon: "",
             pekerjaan: "",
             gaji: "",
+            status: "",
             daftarSiswa: [],
         }
     }, [data])
@@ -104,6 +113,7 @@ export default function OrangTuaForm({ data, dataSiswa }) {
             no_telepon: data?.noTelepon,
             pekerjaan: data?.pekerjaan,
             gaji: data?.gaji,
+            status,
         }
     )
     const datas = defaultValues.daftarSiswa.map((val) => {
@@ -134,6 +144,7 @@ export default function OrangTuaForm({ data, dataSiswa }) {
             if (result.ok) {
                 notification(result.ok, "sukses", result.statusText)
                 setDisable(false)
+                setFinal(true)
             } else {
                 notification(result.ok, "gagal", result.statusText)
             }
@@ -155,6 +166,8 @@ export default function OrangTuaForm({ data, dataSiswa }) {
             if (result.ok) {
                 notification(result.ok, "sukses", result.statusText)
                 setDisable(false)
+                setFinal(true)
+                router.back()
             } else {
                 notification(result.ok, "gagal", result.statusText)
             }
@@ -164,9 +177,14 @@ export default function OrangTuaForm({ data, dataSiswa }) {
             // router.back()
         }
     }
-    const addDaftarSiswa = async (data) => {
+
+    const checkStatus = final && status ? status : data.status
+
+    console.log({checkStatus})
+
+    const addWali = async (data) => {
         try {
-            const result = await fetch("http://localhost:8000/orangtuasiswa", {
+            const result = await fetch("http://localhost:8000/walisiswa", {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
@@ -185,6 +203,63 @@ export default function OrangTuaForm({ data, dataSiswa }) {
             // router.back()
         }
     }
+    const addAyah = async (data) => {
+        try {
+            const result = await fetch("http://localhost:8000/ayahsiswa", {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bodyDaftarSiswa())
+            })
+            if (result.ok) {
+                notification(result.ok, "sukses", result.statusText)
+                setDisable(false)
+            } else {
+                notification(result.ok, "gagal", result.statusText)
+            }
+        } catch (e) {
+        } finally {
+
+            // router.back()
+        }
+    }
+    const addIbu = async (data) => {
+        try {
+            const result = await fetch("http://localhost:8000/ibusiswa", {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bodyDaftarSiswa())
+            })
+            if (result.ok) {
+                notification(result.ok, "sukses", result.statusText)
+                setDisable(false)
+            } else {
+                notification(result.ok, "gagal", result.statusText)
+            }
+        } catch (e) {
+        } finally {
+
+            // router.back()
+        }
+    }
+
+    const ortuOptions = [
+        {
+            label: "Ayah",
+            value: "ayah",
+        },
+        {
+            label: "Ibu",
+            value: "ibu",
+        },
+        {
+            label: "Wali",
+            value: "wali",
+        },
+    ]
     
     if (!dataSiswa) {
         return <p>Loading</p>
@@ -207,6 +282,13 @@ export default function OrangTuaForm({ data, dataSiswa }) {
                                                     ?
                                                     <GuruSelect onChange={(val) => field.onChange(val.value.toString())} />
                                                     :
+                                                    value === "status"
+                                                    ?
+                                                    <Select options={ortuOptions} defaultValue={status} onChange={(val) => {
+                                                        setStatus(val)
+                                                        setFinal(false)
+                                                    }} />
+                                                    :
                                                     <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
                                             }
                                         </FormControl>
@@ -226,7 +308,7 @@ export default function OrangTuaForm({ data, dataSiswa }) {
                     // <p>{JSON.stringify(chaval)}</p>
                     <>
                         <DataTableDemo data={chaval} header={Object.keys(chaval[0])} />
-                        <ButtonSessionForm onClick={addDaftarSiswa} />
+                        <ButtonSessionForm onClick={checkStatus === "ayah" ? addAyah : checkStatus ===  "ibu" ? addIbu : addWali} />
                     </>
                     : null
             }

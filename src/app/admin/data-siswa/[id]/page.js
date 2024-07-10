@@ -24,6 +24,8 @@ export default function Edit({ params }) {
     fetchData();
   }, []);
 
+  console.log({datasiswa: data})
+
   const handleDelete = async () => {
     try{
 
