@@ -26,7 +26,9 @@ export default function OrangTua() {
 
   const onClick = (obj) => {
     const keyVal = Object.keys(obj).find((item) => item === "id_orangtua")
-    router.push(`/admin/orang-tua/edit?idOrtu=${obj[keyVal]}`)
+    const status = Object.keys(obj).find((item) => item === "status")
+    console.log({obj})
+    router.push(`/admin/orang-tua/edit?idOrtu=${obj[keyVal]}&status=${obj[status]}`)
   }
   return (
     <div>

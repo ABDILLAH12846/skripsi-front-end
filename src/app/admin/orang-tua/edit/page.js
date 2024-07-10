@@ -7,13 +7,14 @@ import OrangTuaForm from '@/component/orangtua-form';
 export default function page() {
     const searchParams = useSearchParams();
     const idOrtu = searchParams.get("idOrtu")
+    const statusOrtu = searchParams.get("status")
 
     const [data, setData] = React.useState(null);
     const [dataSiswa, setDataSiswa] = React.useState(null);
   
     React.useEffect(() => {
       async function fetchData() {
-        const res = await fetch(`http://localhost:8000/orangtua/${idOrtu}`);
+        const res = await fetch(`http://localhost:8000/orangtua/${idOrtu}?status=${statusOrtu}`);
         const data = await res.json();
         setData(data);
       }
