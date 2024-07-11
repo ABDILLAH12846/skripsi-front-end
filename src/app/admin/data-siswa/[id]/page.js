@@ -47,7 +47,7 @@ export default function Edit({ params }) {
         </div>
       </div>
       {
-        data ? <SiswaProfile data={data[0]} /> : <p>LOading</p>
+        data ? <SiswaProfile data={data} /> : <p>LOading</p>
       }
     </div>
   )

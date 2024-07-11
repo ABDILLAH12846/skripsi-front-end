@@ -10,7 +10,8 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 
-export function DataTableRapor() {
+export function DataTableRapor({data}) {
+  console.log({ii : data})
 
   return (
     <div className="w-full">
@@ -78,20 +79,24 @@ export function DataTableRapor() {
                 </td>
               </tr>
             )} */}
-            <tr>
-              <td className="p-2 border">Matematika</td>
-              <td className="p-2 border">80</td>
-              <td className="p-2 border">90</td>
-              <td className="p-2 border">90</td>
-              <td className="p-2 border">80</td>
-              <td className="p-2 border">90</td>
-              <td className="p-2 border">90</td>
-              <td className="p-2 border">90</td>
-              <td className="p-2 border">80</td>
-              <td className="p-2 border">90</td>
-              <td className="p-2 border">A</td>
-              <td className="p-2 border">Tuntas</td>
+            {
+              data.map((val) => (
+                <tr>
+              <td className="p-2 border">{val.nama_matapelajaran}</td>
+              <td className="p-2 border">{val.UHA}</td>
+              <td className="p-2 border">-</td>
+              <td className="p-2 border">-</td>
+              <td className="p-2 border">-</td>
+              <td className="p-2 border">{val.TH}</td>
+              <td className="p-2 border">-</td>
+              <td className="p-2 border">-</td>
+              <td className="p-2 border">-</td>
+              <td className="p-2 border">{val.UTS}</td>
+              <td className="p-2 border">{val.predikat}</td>
+              <td className="p-2 border">{val.keterangan}</td>
             </tr>
+              ))
+            }
           </tbody>
         </table>
       </div>

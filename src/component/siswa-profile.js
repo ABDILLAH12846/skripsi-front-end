@@ -6,6 +6,9 @@ import { useRouter, usePathname } from 'next/navigation'
 import React from 'react'
 
 export default function SiswaProfile({ data }) {
+    const header = React.useMemo(() => {
+        return ["nama", "status", "alamat", "no_telepon", "pekerjaan", "gaji",]
+    }, [])
     return (
         <div className={styles.content()}>
             <div className={styles.leftProfile()}>
@@ -18,15 +21,25 @@ export default function SiswaProfile({ data }) {
                 </div>
             </div>
             <div className={styles.righContent()}>
-                <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block"}}>Data Pribadi</h3>
+                <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block" }}>Data Pribadi</h3>
                 <div className={styles.valueBox()}>
-                    {Object.keys(data).map((key) => (
+                    {Object.keys(data).filter((val) => val !== "orangtua").map((key) => (
                         <div className={styles.listValue()}>
                             <span style={{ fontWeight: "bold", fontSize: "16px" }}>{key}</span>
                             <span>{data[key] || "-"}</span>
                         </div>
                     ))}
                 </div>
+                <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block" }}>Data Orang Tua</h3>
+                {
+                    data.orangtua
+                        ?
+                        <div style={{marginBottom: 40}}>
+                            <DataTableDemo data={data.orangtua} header={header} />
+                        </div>
+                        :
+                        null
+                }
             </div>
         </div>
     )

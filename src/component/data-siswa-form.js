@@ -21,7 +21,7 @@ import ButtonSessionForm from './button-session-form'
 import { Select } from 'antd'
 
 const formSchema = z.object({
-    nis: z.string(),
+    NIPD: z.string(),
     nisn: z.string(),
     nama: z.string().min(8, {
         message: "NIP harus memiliki 8 karakter"
@@ -35,36 +35,57 @@ const formSchema = z.object({
     }),
     noTelepon: z.string(),
     password: z.string(),
+    NoKartuKeluarga: z.string(),
+    NIK: z.string(),
+    status: z.string(),
+    TerdaftarSebagai: z.string(),
+    TanggalMasuk: z.string().transform((str) => new Date(str)),
 })
 
 export default function DataSiswaForm({ data, action }) {
     const router = useRouter()
+    const [status, setStatus] = React.useState(data.status ? data.status : "aktif")
+    const [daftar, setDaftar] = React.useState(data.terdaftar_sebagai ? data.terdaftar_sebagai : "siswa baru")
+    const [valid, setValid] = React.useState(data.valid ? data.valid : "valid")
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
                 nisn: data?.nisn.toString(),
                 nama: data?.nama,
-                nis: data?.nis.toString(),
+                NIPD: data?.NIPD.toString(),
                 email: data?.email,
                 jenisKelamin: data?.jenis_kelamin,
                 tanggalLahir: new Date(data?.tanggal_lahir).toISOString().split('T')[0],
                 tempatLahir: data?.tempat_lahir,
                 alamat: data?.alamat,
                 noTelepon: data?.no_telepon,
+                NoKartuKeluarga: data?.No_KK,
+                NIK: data?.NIK,
+                status: data?.status,
+                TerdaftarSebagai: data?.terdaftar_sebagai,
+                TanggalMasuk: data?.tanggal_masuk ? new Date(data?.tanggal_masuk).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                valid: data?.valid,
                 password: data?.password,
             }
         }
         return {
             nisn: "",
             nama: "",
-            nis: "",
+            NIPD: "",
             email: "",
             jenisKelamin: "",
             tanggalLahir: new Date().toISOString().split('T')[0],
             tempatLahir: "",
             alamat: "",
             noTelepon: "",
+            NoKartuKeluarga: "",
+            NIK: "",
+            status,
+            TerdaftarSebagai: daftar,
+            TanggalMasuk: new Date().toISOString().split('T')[0],
+            valid: valid,
             password: "",
+
         }
     }, [data])
     const form = useForm({
@@ -75,7 +96,7 @@ export default function DataSiswaForm({ data, action }) {
     const body = (data) => (
         {
             nisn: data?.nisn,
-            nis: data?.nis,
+            NIPD: data?.NIPD,
             nama: data?.nama,
             email: data?.email,
             jenis_kelamin: data?.jenisKelamin,
@@ -84,10 +105,17 @@ export default function DataSiswaForm({ data, action }) {
             alamat: data?.alamat,
             no_telepon: data?.noTelepon,
             password: data?.password,
+            No_KK: data?.NoKartuKeluarga,
+            NIK: data?.NIK,
+            status,
+            terdaftar_sebagai: daftar,
+            tanggal_masuk: new Date(data?.TanggalMasuk).toISOString().split('T')[0],
+            valid: valid
         }
     )
 
     const edit = async (data) => {
+        console.log(body(data))
         try {
             await fetch(`http://localhost:8000/siswa/${data?.nisn}`, {
                 method: "PUT",
@@ -101,6 +129,7 @@ export default function DataSiswaForm({ data, action }) {
     }
 
     const add = async (data) => {
+        console.log(body(data))
         try {
             const result = await fetch("http://localhost:8000/siswa", {
                 method: "POST",
@@ -126,6 +155,41 @@ export default function DataSiswaForm({ data, action }) {
         },
     ]
 
+    const statusOptions = [
+        {
+            label: "Aktif",
+            value: "aktif",
+        },
+        {
+            label: "Non Aktif",
+            value: "non aktif"
+        },
+    ]
+
+    const daftarOptions = [
+        {
+            label: "Siswa Baru",
+            value: "siswa baru",
+        },
+        {
+            label: "Pindahan",
+            value: "pindahan"
+        },
+    ]
+
+    const validOptions = [
+        {
+            label: "Valid",
+            value: "valid",
+        },
+        {
+            label: "Tidak Valid",
+            value: "tidak valid"
+        },
+    ]
+
+
+
     return (
         <div>
             <Form {...form}>
@@ -146,7 +210,19 @@ export default function DataSiswaForm({ data, action }) {
                                                         <Select placeholder="Jenis Kelamin" style={{ width: "100%" }} size="large" options={genderOptions} onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null} />
                                                     </div>
                                                     :
-                                                    <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                                    value === "status"
+                                                        ?
+                                                        <Select placeholder="Status" style={{ width: "100%" }} size="large" options={statusOptions} onChange={(val) => setStatus(val)} defaultValue={status} />
+                                                        :
+                                                        value === "TerdaftarSebagai"
+                                                            ?
+                                                            <Select placeholder="Terdaftar Sebagai" style={{ width: "100%" }} size="large" options={daftarOptions} onChange={(val) => setDaftar(val)} defaultValue={daftar} />
+                                                            :
+                                                            value === "valid"
+                                                                ?
+                                                                <Select placeholder="valid" style={{ width: "100%" }} size="large" options={validOptions} onChange={(val) => setValid(val)} defaultValue={valid} />
+                                                                :
+                                                                <Input type={value === "tanggalLahir" || value === "TanggalMasuk" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
                                             }
                                         </FormControl>
                                         <FormMessage />
@@ -173,7 +249,7 @@ const styles = {
     nisn: css({
         width: "calc(50% - 10px)",
     }),
-    nis: css({
+    NIPD: css({
         width: "calc(50% - 10px)",
     }),
     nama: css({
@@ -201,6 +277,27 @@ const styles = {
         width: "calc(50% - 10px)",
     }),
     noTeleponOrangTua: css({
+        width: "calc(50% - 10px)",
+    }),
+    NoKartuKeluarga: css({
+        width: "calc(25% - 10px)",
+    }),
+    NIK: css({
+        width: "calc(25% - 10px)",
+    }),
+    status: css({
+        width: "calc(25% - 10px)",
+    }),
+    TerdaftarSebagai: css({
+        width: "calc(25% - 10px)",
+    }),
+    TanggalMasuk: css({
+        width: "calc(25% - 10px)",
+    }),
+    valid: css({
+        width: "calc(25% - 10px)",
+    }),
+    password: css({
         width: "calc(50% - 10px)",
     }),
     buttonSession: css({

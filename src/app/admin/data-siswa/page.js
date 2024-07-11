@@ -10,7 +10,7 @@ export default function DataSiswa() {
   const router = useRouter();
   const path = usePathname();
   const header = React.useMemo(() => {
-    return ["nama", "nis", "email","kelas","tahun_ajaran", "no_telepon_orangtua", "nama_orangtua"]
+    return ["nama", "nisn", "email","kelas","tahun_ajaran", "no_telepon_orangtua", "nama_orangtua"]
   }, [])
 
   const [data, setData] = React.useState(null);
@@ -28,7 +28,7 @@ export default function DataSiswa() {
   console.log({ data })
 
   const onClick = (obj) => {
-    const keyVal = Object.keys(obj).find((item) => item === "nis")
+    const keyVal = Object.keys(obj).find((item) => item === "nisn")
     router.push(`/admin/data-siswa/${obj[keyVal]}`)
   }
   return (
