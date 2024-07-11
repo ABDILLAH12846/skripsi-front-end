@@ -21,7 +21,7 @@ export default function Edit({params}) {
         {
             data 
             ?
-            <DataSiswaForm data={data[0]} action={"edit"} />
+            <DataSiswaForm data={data} action={"edit"} />
             :
             <p>Loading</p>
         }

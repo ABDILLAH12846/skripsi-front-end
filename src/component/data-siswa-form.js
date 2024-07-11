@@ -43,10 +43,11 @@ const formSchema = z.object({
 })
 
 export default function DataSiswaForm({ data, action }) {
+    console.log({data})
     const router = useRouter()
-    const [status, setStatus] = React.useState(data.status ? data.status : "aktif")
-    const [daftar, setDaftar] = React.useState(data.terdaftar_sebagai ? data.terdaftar_sebagai : "siswa baru")
-    const [valid, setValid] = React.useState(data.valid ? data.valid : "valid")
+    const [status, setStatus] = React.useState(data && data.status ? data.status : "aktif")
+    const [daftar, setDaftar] = React.useState(data && data.terdaftar_sebagai ? data.terdaftar_sebagai : "siswa baru")
+    const [valid, setValid] = React.useState(data && data.valid ? data.valid : "valid")
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
