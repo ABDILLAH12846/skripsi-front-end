@@ -186,7 +186,7 @@ export function DataTableDemo({ data, routing, header }) {
     })
 
     return (
-        <div className="w-full">
+        <div className="w-full" style={{marginBottom: 30,}}>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>

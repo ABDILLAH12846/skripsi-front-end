@@ -47,7 +47,7 @@ export default function OrangTuaForm({ data, dataSiswa }) {
     }
 
     const [disable, setDisable] = React.useState(true)
-    const [status, setStatus] = React.useState(data ? data.status : null)
+    const [status, setStatus] = React.useState(data ? data.status : "ayah")
     const [final, setFinal] = React.useState(true);
 
     console.log({data})
@@ -178,7 +178,7 @@ export default function OrangTuaForm({ data, dataSiswa }) {
         }
     }
 
-    const checkStatus = final && status ? status : data.status
+    const checkStatus = final && status ? status : data ? data.status : "ayah"
 
     console.log({checkStatus})
 
