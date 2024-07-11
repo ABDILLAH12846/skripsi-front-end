@@ -37,12 +37,17 @@ const formSchema = z.object({
     jabatan: z.string(),
     jenjang: z.string(),
     jurusan: z.string(),
-    statusKepegawaian: z.string(),
     password: z.string(),
+    NIK: z.string(),
+    TanggalMulaiTugas: z.string().transform((str) => new Date(str)),
+    NoKartuKeluarga: z.string(),
 })
 
 export default function DataGuruForm({ data, action }) {
     const router = useRouter()
+    const [valid, setValid] = React.useState(data && data?.valid ? data?.valid : "valid")
+    const [status, setStatus] = React.useState(data && data.status ? data.status : "aktif")
+    const [kepegawaian, setKepegawaian] = React.useState(data && data.status_kepegawaian ? data.status_kepegawaian : "guru tetap yayasan")
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
@@ -59,6 +64,11 @@ export default function DataGuruForm({ data, action }) {
                 jenjang: data?.jenjang,
                 jurusan: data?.jurusan,
                 statusKepegawaian: data?.status_kepegawaian,
+                NIK: data?.NIK,
+                TanggalMulaiTugas: data?.tanggal_mulai_tugas ? new Date(data?.tanggal_mulai_tugas).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                status: data?.status,
+                valid: data?.valid,
+                NoKartuKeluarga: data?.No_KK,
                 password: data?.password,
             }
         }
@@ -75,7 +85,12 @@ export default function DataGuruForm({ data, action }) {
             jabatan: "",
             jenjang: "",
             jurusan: "",
-            statusKepegawaian: "",
+            statusKepegawaian: kepegawaian,
+            NIK: "",
+            TanggalMulaiTugas: new Date().toISOString().split('T')[0],
+            status: status,
+            valid: valid,
+            NoKartuKeluarga: "",
             password: "",
         }
     }, [data])
@@ -98,8 +113,13 @@ export default function DataGuruForm({ data, action }) {
             jabatan: data?.jabatan,
             jenjang: data?.jenjang,
             jurusan: data?.jurusan,
-            status_kepegawaian: data?.statusKepegawaian,
+            status_kepegawaian: kepegawaian,
+            NIK: data.NIK,
+            tanggal_mulai_tugas: new Date(data.TanggalMulaiTugas).toISOString().split('T')[0],
+            status: status,
+            valid: valid,
             password: data?.password,
+            No_KK: data?.NoKartuKeluarga
         }
     )
 
@@ -156,6 +176,43 @@ export default function DataGuruForm({ data, action }) {
         },
     ];
 
+    const statusOptions = [
+        {
+            label: "Aktif",
+            value: "aktif",
+        },
+        {
+            label: "Non Aktif",
+            value: "non aktif"
+        },
+    ]
+
+    const validOptions = [
+        {
+            label: "Valid",
+            value: "valid",
+        },
+        {
+            label: "Tidak Valid",
+            value: "tidak valid"
+        },
+    
+    ]
+    const kepegawaianOptions = [
+        {
+            label: "Guru Tetap Yayasan",
+            value: "guru tetap yayasan",
+        },
+        {
+            label: "Guru Tidak Tetap",
+            value: "guru tidak tetap"
+        },
+        {
+            label: "Pegawai Tetap Yayasan",
+            value: "pegawai tetap yayasan"
+        },
+    ]
+
 
     return (
         <div>
@@ -182,7 +239,25 @@ export default function DataGuruForm({ data, action }) {
                                                             <Select placeholder="Jabatan" style={{ width: "100%" }} size='large' options={jabatanOptions} onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null}/>
                                                         </div>
                                                         :
-                                                        <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                                        value === "status"
+                                                        ?
+                                                        <div>
+                                                            <Select placeholder="Status" style={{ width: "100%" }} size='large' options={statusOptions} onChange={(val) => setStatus(val)} defaultValue={status}/>
+                                                        </div>
+                                                        :
+                                                        value === "valid"
+                                                        ?
+                                                        <div>
+                                                            <Select placeholder="Valid" style={{ width: "100%" }} size='large' options={validOptions} onChange={(val) => setValid(val)} defaultValue={valid}/>
+                                                        </div>
+                                                        :
+                                                        value === "statusKepegawaian"
+                                                        ?
+                                                        <div>
+                                                            <Select placeholder="Status Kepegawaian" style={{ width: "100%" }} size='large' options={kepegawaianOptions} onChange={(val) => setKepegawaian(val)} defaultValue={kepegawaian}/>
+                                                        </div>
+                                                        :
+                                                        <Input type={value === "tanggalLahir" || value === "TanggalMulaiTugas"? "date" : value === "email" ? "email" : "text"} placeholder={`masukkan ${value} anda di dini`} {...field} value={field.value} />
                                             }
                                         </FormControl>
                                         <FormMessage />
@@ -231,10 +306,10 @@ const styles = {
         width: "calc(50% - 10px)",
     }),
     noTelepon: css({
-        width: "calc(15% - 5px)",
+        width: "calc(20% - 5px)",
     }),
     jabatan: css({
-        width: "calc(35% - 5px)",
+        width: "calc(30% - 5px)",
     }),
     jenjang: css({
         width: "calc(10% - 10px)",
@@ -244,5 +319,23 @@ const styles = {
     }),
     statusKepegawaian: css({
         width: "calc(45% - 10px)",
+    }),
+    NIK: css({
+        width: "calc(25% - 10px)",
+    }),
+    status: css({
+        width: "calc(25% - 10px)",
+    }),
+    TanggalMulaiTugas: css({
+        width: "calc(25% - 10px)",
+    }),
+    valid: css({
+        width: "calc(25% - 10px)",
+    }),
+    password: css({
+        width: "calc(50% - 10px)",
+    }),
+    NoKartuKeluarga: css({
+        width: "calc(50% - 10px)",
     }),
 }
