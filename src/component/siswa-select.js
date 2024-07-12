@@ -1,5 +1,5 @@
 import React from 'react'
-import { Drawer, Space, Checkbox, Divider } from 'antd';
+import { Drawer, Space, Checkbox, Divider, Alert } from 'antd';
 import { Button } from "antd"
 import { useController, useFormContext } from "react-hook-form";
 import { css } from '@/utils/stitches.config';
@@ -35,8 +35,8 @@ export default function SiswaSelect({ isDisabled, list, chaval, setChaval }) {
                         </div>
                         {
                             list.map((val) => (
-                                <Checkbox defaultChecked={chaval.find((el) => el.nisn === val.nisn)} onChange={(e) => onChange(e.target.checked, val)} className={styles.selectBox()}>
-                                    <div className={styles.wrapper()}>
+                                <Checkbox style={{ backgroundColor: val.tinggal_kelas === 1 ? "#ffb703" : "white" }} defaultChecked={chaval.find((el) => el.nisn === val.nisn)} onChange={(e) => onChange(e.target.checked, val)} className={styles.selectBox()}>
+                                    <div className={styles.wrapper()} >
                                         <div className={styles.nisn()}>{val.nisn}</div>
                                         <div>{val.nama}</div>
                                     </div>
@@ -44,6 +44,13 @@ export default function SiswaSelect({ isDisabled, list, chaval, setChaval }) {
                             ))
                         }
                     </div>
+                    <Alert
+                    style={{marginTop: 30,}}
+                        message="Perhatian"
+                        description="Siswa yang berwarna kuning menandakan siswa tinggal kelas"
+                        type="warning"
+                        showIcon
+                    />
                 </>
             </Drawer>
         </div>
