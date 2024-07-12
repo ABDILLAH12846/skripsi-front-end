@@ -235,15 +235,15 @@ export default function KelasForm({ data, dataSiswa }) {
                 </form>
             </Form>
             <ButtonSessionForm onClick={form.handleSubmit(data ? editKelas : addKelas)} />
-            <SiswaSelect isDisabled={!disable || data ? false : true} defaultValues={chaval} list={dataSiswa.map((val) => ({ nisn: val.nisn, nama: val.nama }))} formValue={formValue} chaval={chaval} setChaval={setChaval} />
+            <SiswaSelect isDisabled={!disable || data ? false : true} defaultValues={chaval} list={dataSiswa.map((val) => ({ nisn: val.nisn, nama: val.nama, tinggal_kelas: val.tinggal_kelas }))} formValue={formValue} chaval={chaval} setChaval={setChaval} />
             {
                 chaval.length > 0
                     ?
                     // <p>{JSON.stringify(chaval)}</p>
-                    <>
+                    <div style={{marginTop: 20,}}>
                         <DataTableDemo data={chaval} header={Object.keys(chaval[0])} />
                         <ButtonSessionForm onClick={addDaftarSiswa} />
-                    </>
+                    </div>
                     : null
             }
         </div>
