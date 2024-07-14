@@ -30,13 +30,15 @@ export default function SiswaProfile({ data }) {
                         </div>
                     ))}
                 </div>
-                <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block" }}>Data Orang Tua</h3>
                 {
                     data.orangtua
                         ?
-                        <div style={{marginBottom: 40}}>
-                            <DataTableDemo data={data.orangtua} header={header} />
-                        </div>
+                        <>
+                            <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block" }}>Data Orang Tua</h3>
+                            <div style={{ marginBottom: 40 }}>
+                                <DataTableDemo data={data.orangtua} header={header} />
+                            </div>
+                        </>
                         :
                         null
                 }
