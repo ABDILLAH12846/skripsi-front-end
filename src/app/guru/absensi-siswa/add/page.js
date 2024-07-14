@@ -135,7 +135,7 @@ export default function KelolaAbsensi({ params }) {
       console.log("edit dan tambah")
       addAbsensi(attendanceArray.filter((val) => val.id_absensi === null))
       editAbsensi(attendanceArray.filter((val) => val.id_absensi !== null))
-    } else if (findIdNull === attendanceArray.length) {
+    } else if (findIdNull.length === attendanceArray.length) {
       console.log("tambah")
       addAbsensi(attendanceArray)
     } else {
