@@ -31,6 +31,7 @@ export default function HafalanInput({ data }) {
                     bulan: data.bulan,
                     minggu: data.minggu,
                     hafalan: `${suroh} ayat ${ayat}`,
+                    no_kelas: data.no_kelas,
 
                 })
             })

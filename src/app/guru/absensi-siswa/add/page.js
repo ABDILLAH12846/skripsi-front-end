@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { customAlphabet } from 'nanoid';
 import ButtonSessionForm from '@/component/button-session-form';
 import { GlobalContext } from '@/app/layout';
+import { css } from '@/utils/stitches.config';
 
 export default function KelolaAbsensi({ params }) {
   const { user } = React.useContext(GlobalContext)
@@ -39,6 +40,8 @@ export default function KelolaAbsensi({ params }) {
 
       const data = await res.json();
 
+      console.log({ data });
+
       const formattedData = data.map(item => ({
         id_absensi: item.id_absensi,
         nisn: item.nisn,
@@ -47,6 +50,8 @@ export default function KelolaAbsensi({ params }) {
           absen: item.status === 'absen' ? 1 : 0,
           sakit: item.status === 'sakit' ? 1 : 0,
         },
+        no_kelas: item.no_kelas,
+        nama: item.nama
       }));
 
       setInitialList(formattedData);
@@ -79,14 +84,18 @@ export default function KelolaAbsensi({ params }) {
     });
   };
 
+  console.log({ initialList })
+
   const addAbsensi = async (data) => {
+    const bodyPost = data.map((val) => ({ ...val, id_absensi: nanoid(), no_kelas: initialList[0].no_kelas }))
+    console.log({ bodyPost })
     try {
       const result = await fetch("http://localhost:8000/absensi", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ attendanceData: data.map((val) => ({ ...val, id_absensi: nanoid() })) })
+        body: JSON.stringify({ attendanceData: bodyPost })
       })
       console.log(result)
       if (result.ok) {
@@ -151,39 +160,89 @@ export default function KelolaAbsensi({ params }) {
         value={date}
         onChange={(val) => setDate(val.target.value)}
       />
-      <h1>Kelola Absensi</h1>
       {initialList.length === 0 ? (
         <p>Data absensi untuk tanggal {date} belum tersedia.</p>
       ) : (
-        initialList.map(val => (
-          <div key={val.nisn}>
-            <h2>NISN {val.nisn}</h2>
-            <RadioGroup
-              onValueChange={(val) => {
-                const { id_absensi, nisn, value } = JSON.parse(val);
-                updateAttendanceArray(id_absensi, nisn, value);
-              }}
-            >
-              {Object.keys(val.absensi).map(item => (
-                <div className="flex items-center space-x-2" key={item}>
-                  <RadioGroupItem
-                    value={JSON.stringify({ id_absensi: val.id_absensi, nisn: val.nisn, value: item })}
-                    id={`${val.id_absensi || 'new'}-${val.nisn}-${item}`}  // Use 'new' if id_absensi is null
-                    name={`attendance-${val.nisn}`}
-                    checked={attendanceArray.find(att => att.nisn === val.nisn)?.status === item}
-                  />
-                  <Label htmlFor={`${val.id_absensi || 'new'}-${val.nisn}-${item}`}>{item}</Label>
-                </div>
-              ))}
-            </RadioGroup>
+        <div className={styles.container()}>
+          <div className={styles.listItem()}>
+            <div className={styles.label()}>
+              <div className={styles.nisn()}>NISN</div>
+              <div>Nama</div>
+            </div>
+            <div className={styles.radioButtonList()}>
+              <div className={styles.radioItem()}>Hadir</div>
+              <div className={styles.radioItem()}>Absen</div>
+              <div className={styles.radioItem()}>Sakit</div>
+            </div>
           </div>
-        ))
+          {initialList.map(val => (
+            <div key={val.nisn} className={styles.listItem()} style={{borderBottom: "1px solid $gray500"}}>
+              <div className={styles.label()}>
+                <div className={styles.nisn()}>{val.nisn}</div>
+                <div>{val.nama}</div>
+              </div>
+              <RadioGroup
+                onValueChange={(val) => {
+                  const { id_absensi, nisn, value } = JSON.parse(val);
+                  updateAttendanceArray(id_absensi, nisn, value);
+                }}
+              >
+                <div className={styles.radioButtonList()}>
+
+
+                  {Object.keys(val.absensi).map(item => (
+                    <div key={item} className={styles.radioItem()}>
+                      <RadioGroupItem
+                        value={JSON.stringify({ id_absensi: val.id_absensi, nisn: val.nisn, value: item })}
+                        id={`${val.id_absensi || 'new'}-${val.nisn}-${item}`}  // Use 'new' if id_absensi is null
+                        name={`attendance-${val.nisn}`}
+                        checked={attendanceArray.find(att => att.nisn === val.nisn)?.status === item}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </RadioGroup>
+            </div>
+          )
+          )
+          }</div>
+
       )}
-      <div>
-        <h2>Attendance Data:</h2>
-        <pre>{JSON.stringify(attendanceArray, null, 2)}</pre>
-      </div>
       <ButtonSessionForm onClick={onClick} />
     </div>
   );
+}
+
+const styles = {
+  listItem: css({
+    display: "flex",
+    width: "100%",
+    // backgroundColor: "AliceBlue",
+    justifyContent: "space-between",
+    padding: 5,
+  }),
+  radioButtonList: css({
+    display: "flex",
+    width: 300,
+    // backgroundColor: "$gray500",
+    justifyContent: "space-between",
+
+  }),
+  radioItem: css({
+    width: "30%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }),
+  label: css({
+    display: "flex",
+    alignItems: "center",
+  }),
+  nisn: css({
+    width: 100,
+  }),
+  container: css({
+    marginTop: 20,
+    marginBottom: 20,
+  })
 }

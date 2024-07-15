@@ -20,6 +20,8 @@ export default function page() {
         fetchData();
     }, []);
 
+    console.log({ dataHafalan: data})
+
     return (
         <div>
             {
@@ -32,6 +34,7 @@ export default function page() {
                                     ...val, label: `minggu ${val.minggu}`,
                                     bulan,
                                     nisn,
+                                    no_kelas: data.hafalan[0].no_kelas,
                                 }} />
                             ))
 
