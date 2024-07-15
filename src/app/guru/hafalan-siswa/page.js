@@ -5,6 +5,7 @@ import React from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { GlobalContext } from '@/app/layout';
 import Blank from '@/component/blank';
+import { Select } from 'antd';
 
 export default function page({ params }) {
   const { user } = React.useContext(GlobalContext)
@@ -13,6 +14,7 @@ export default function page({ params }) {
   }
   const { nip: id } = user.user;
   const [data, setData] = React.useState(null);
+  const [bulan, setBulan] = React.useState(1);
   const router = useRouter();
   const path = usePathname();
 
@@ -23,13 +25,13 @@ export default function page({ params }) {
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`http://localhost:8000/hafalan/kelas/${id}?bulan=${1}`);
+      const res = await fetch(`http://localhost:8000/hafalan/kelas/${id}?bulan=${bulan}`);
       const data = await res.json();
       setData(data);
     }
 
     fetchData();
-  }, []);
+  }, [bulan]);
   console.log({dataHafalan : data})
 
  function transformData(data) {
@@ -53,8 +55,28 @@ export default function page({ params }) {
 }
 
   const header = ["nisn","nama","minggu1","minggu2","minggu3","minggu4"]
+
+  const bulanList = [
+    { label: "Januari", value: 1 },
+    { label: "Februari", value: 2 },
+    { label: "Maret", value: 3 },
+    { label: "April", value: 4 },
+    { label: "Mei", value: 5 },
+    { label: "Juni", value: 6 },
+    { label: "Juli", value: 7 },
+    { label: "Agustus", value: 8 },
+    { label: "September", value: 9 },
+    { label: "Oktober", value: 10 },
+    { label: "November", value: 11 },
+    { label: "Desember", value: 12 }
+  ];
+  
+
   return (
     <div>
+      <div style={{marginBottom: 20,}}>
+        <Select size='large' style={{width: 200}} options={bulanList} defaultValue={bulan} onChange={(val) => setBulan(val)} />
+      </div>
       {
         data && data.length > 0
           ?
