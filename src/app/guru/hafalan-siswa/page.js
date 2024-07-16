@@ -12,26 +12,28 @@ export default function page({ params }) {
   if (!user) {
     return <div>Loading...</div>;
   }
-  const { nip: id } = user.user;
+  console.log({user: user})
+  const { nip: id, no_kelas } = user.user;
   const [data, setData] = React.useState(null);
   const [bulan, setBulan] = React.useState(1);
+  const [kelas, setKelas] = React.useState(10)
   const router = useRouter();
   const path = usePathname();
 
   const onClick = (obj) => {
     const keyVal = Object.keys(obj).find((item) => item === "nisn")
-    router.push(`${path}/edit?nisn=${obj[keyVal]}&bulan=${1}`)
+    router.push(`${path}/edit?nisn=${obj[keyVal]}&bulan=${bulan}&kelas=${kelas}`)
   }
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`http://localhost:8000/hafalan/kelas/${id}?bulan=${bulan}`);
+      const res = await fetch(`http://localhost:8000/hafalan/kelas/${id}?bulan=${bulan}&kelas=${kelas}`);
       const data = await res.json();
       setData(data);
     }
 
     fetchData();
-  }, [bulan]);
+  }, [bulan, kelas]);
   console.log({dataHafalan : data})
 
  function transformData(data) {
@@ -70,12 +72,25 @@ export default function page({ params }) {
     { label: "November", value: 11 },
     { label: "Desember", value: 12 }
   ];
+
+  const determineKelasOptions = (userKelas) => {
+    const options = [];
+    for (let i = 10; i <= userKelas; i++) {
+      options.push({ label: i.toString(), value: i });
+    }
+    return options;
+  }
+
+  const kelasOptions = determineKelasOptions(no_kelas);
   
 
   return (
     <div>
       <div style={{marginBottom: 20,}}>
         <Select size='large' style={{width: 200}} options={bulanList} defaultValue={bulan} onChange={(val) => setBulan(val)} />
+      </div>
+      <div style={{marginBottom: 20,}}>
+        <Select size='large' style={{width: 200}} options={kelasOptions} defaultValue={kelas} onChange={(val) => setKelas(val)} />
       </div>
       {
         data && data.length > 0
