@@ -8,12 +8,13 @@ export default function page() {
     const searchParams = useSearchParams();
     const nisn = searchParams.get("nisn")
     const semester = searchParams.get("semester")
+    const kelas = searchParams.get("kelas")
 
     const [data, setData] = React.useState(null)
 
     React.useEffect(() => {
         async function fetchData() {
-            const res = await fetch(`http://localhost:8000/raport/${nisn}?semester=${semester}`);
+            const res = await fetch(`http://localhost:8000/raport/${nisn}?semester=${semester}&no_kelas=${kelas}`);
             const data = await res.json();
             setData(data);
         }

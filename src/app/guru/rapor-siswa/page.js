@@ -14,9 +14,10 @@ export default function page() {
   if (!user) {
     return <div>Loading...</div>;
   }
-  const { nip } = user.user;
+  const { nip, no_kelas } = user.user;
   const [data, setData] = React.useState(null);
   const [semester, setSemester] = React.useState("ganjil");
+  const [kelas, setKelas] = React.useState(10)
   const header = React.useMemo(() => {
     return ["no", "nisn", "nis", "nama"]
   }, [])
@@ -33,7 +34,7 @@ export default function page() {
 
   const onClick = (obj) => {
     const keyVal = Object.keys(obj).find((item) => item === "nisn")
-    router.push(`${path}/edit?nisn=${obj[keyVal]}&semester=${semester}`)
+    router.push(`${path}/edit?nisn=${obj[keyVal]}&semester=${semester}&kelas=${kelas}`)
   }
 
   console.log({dataRapor: data})
@@ -48,10 +49,20 @@ export default function page() {
       value: "genap",
     },
   ]
+  const determineKelasOptions = (userKelas) => {
+    const options = [];
+    for (let i = 10; i <= userKelas; i++) {
+      options.push({ label: i.toString(), value: i });
+    }
+    return options;
+  }
+
+  const kelasOptions = determineKelasOptions(no_kelas);
 
   return (
     <div>
       <Select style={{marginBottom: 20,}} options={semesterOptions} defaultValue={semester} onChange={(val) => setSemester(val)} size='large'/>
+      <Select style={{marginBottom: 20,}} options={kelasOptions} defaultValue={kelas} onChange={(val) => setKelas(val)} size='large'/>
       {
         data
         ?
