@@ -21,7 +21,9 @@ export default function RaportSiswa() {
 
     const [data, setData] = useState([]);
     const [selectedSemester, setSelectedSemester] = useState("ganjil");
-    const [semesterLabel, setSemesterLabel] = useState("Semester Ganjil");
+    const [semesterLabel] = useState("Semester Ganjil");
+    const [selectedKelas, setSelectedKelas] = useState("10");
+    const [kelasLabel] = useState("Kelas X");
     const [loading, setLoading] = useState(true);
 
     const dataSemester = [
@@ -29,17 +31,25 @@ export default function RaportSiswa() {
         { value: "genap", title: "Semester Genap" },
     ];
 
+    const dataKelas = [
+        { value: "10", title: "Kelas X" },
+        { value: "11", title: "Kelas XI" },
+        { value: "12", title: "Kelas XII" },
+    ];
+
     const handleSemesterChange = (selectedOption) => {
         setSelectedSemester(selectedOption);
-        const selectedLabel = dataSemester.find(item => item.value === selectedOption)?.title;
-        setSemesterLabel(selectedLabel || "Semester Ganjil");
+    };
+
+    const handleKelasChange = (selectedOption) => {
+        setSelectedKelas(selectedOption);
     };
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:8000/raport/${nisn}?semester=${selectedSemester}`);
+                const res = await fetch(`http://localhost:8000/raport/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`);
                 if (!res.ok) {
                     throw new Error(`HTTP error! Status: ${res.status}`);
                 }
@@ -53,7 +63,7 @@ export default function RaportSiswa() {
         };
 
         fetchData();
-    }, [nisn, selectedSemester]);
+    }, [nisn, selectedSemester, selectedKelas]);
 
     const headers = ["Mata Pelajaran", "Nilai Akhir", "Capaian Kompetensi"];
 
@@ -74,7 +84,12 @@ export default function RaportSiswa() {
 
     return (
         <div>
-            <div className="p-4">
+            <div className="flex gap-5 p-4">
+                <MenuSelect
+                    label={kelasLabel}
+                    data={dataKelas}
+                    onChange={handleKelasChange}
+                />
                 <MenuSelect
                     label={semesterLabel}
                     data={dataSemester}
