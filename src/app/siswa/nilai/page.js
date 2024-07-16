@@ -17,7 +17,9 @@ export default function NilaiSiswa() {
 
   const [data, setData] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState("ganjil");
-  const [semesterLabel, setSemesterLabel] = useState("Semester Ganjil");
+  const [semesterLabel] = useState("Semester Ganjil");
+  const [selectedKelas, setSelectedKelas] = useState("10");
+  const [kelasLabel] = useState("Kelas X");
   const [loading, setLoading] = useState(true);
 
   const dataSemester = [
@@ -25,32 +27,50 @@ export default function NilaiSiswa() {
     { value: "genap", title: "Semester Genap" },
   ];
 
+  const dataKelas = [
+    { value: "10", title: "Kelas X" },
+    { value: "11", title: "Kelas XI" },
+    { value: "12", title: "Kelas XII" },
+  ];
+
   const handleSemesterChange = (selectedOption) => {
     setSelectedSemester(selectedOption);
-    const selectedLabel = dataSemester.find(item => item.value === selectedOption)?.title;
-    setSemesterLabel(selectedLabel || "Semester Ganjil");
+  };
+  const handleKelasChange = (selectedOption) => {
+    setSelectedKelas(selectedOption);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const res = await fetch(`http://localhost:8000/nilai/${nisn}?semester=${selectedSemester}`);
-      if (!res.ok) {
-        throw new Error(`HTTP error! Status: ${res.status}`);
+      try {
+        const res = await fetch(`http://localhost:8000/nilai/${nisn}?no_kelas=${selectedKelas}&semester=${selectedSemester}`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        const data = await res.json();
+        setData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
-      const data = await res.json();
-      setData(data);
     };
 
     fetchData();
-  }, [nisn, selectedSemester]);
+  }, [nisn, selectedKelas, selectedSemester]);
 
   return (
     <div>
       <div className={styles.header()}>
-        <div className={styles.title()}>Hafalan Siswa</div>
+        <div className={styles.title()}>Nilai Siswa</div>
       </div>
       <div className={styles.filterBox()}>
+        <MenuSelect
+          label={kelasLabel}
+          data={dataKelas}
+          onChange={handleKelasChange}
+        />
         <MenuSelect
           label={semesterLabel}
           data={dataSemester}
@@ -59,7 +79,7 @@ export default function NilaiSiswa() {
       </div>
       <div className='m-4'>
         <div>{semesterLabel}</div>
-        {data ?<DataTableNilai className={styles.tableContainer()} data={data} />: null}
+        {loading ? <div>Loading...</div> : <DataTableNilai className={styles.tableContainer()} data={data} />}
       </div>
     </div>
   );
