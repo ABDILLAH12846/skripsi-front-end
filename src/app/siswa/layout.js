@@ -9,7 +9,7 @@ export default function SiswaLayout({ children }) {
     return [
       {
         title: "Profil",
-        link: "/siswa/profile"
+        link: "/siswa/profil"
       },
       {
         title: "Absensi",
