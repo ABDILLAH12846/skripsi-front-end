@@ -1,104 +1,92 @@
-"use client"
+"use client";
 
-import { MenuSelect } from '@/component/select'
-import { TableSemesterDemo } from '@/component/semester-table'
-import { css } from '@/utils/stitches.config'
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { GlobalContext } from '@/app/layout';
+import { css } from '@/utils/stitches.config';
+import { MenuSelect } from '@/component/select';
+import { DataTableNilai } from '@/component/tabel-nilai';
 
-export default function Nilai() {
+export default function NilaiSiswa() {
+  const { user } = React.useContext(GlobalContext);
 
-  const data = [
-    {
-      value: "X",
-      title: "Kelas X"
-    },
-    {
-      value: "XI",
-      title: "Kelas XI"
-    },
-    {
-      value: "XII",
-      title: "Kelas XII"
-    },
-  ]
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  const { nisn } = user.user;
+
+  const [data, setData] = useState([]);
+  const [selectedSemester, setSelectedSemester] = useState("ganjil");
+  const [semesterLabel, setSemesterLabel] = useState("Semester Ganjil");
+  const [loading, setLoading] = useState(true);
 
   const dataSemester = [
-    {
-      value: "ganjil",
-      title: "Semester Ganjil"
-    },
-    {
-      value: "genap",
-      title: "Semester Genap"
-    },
-  ]
+    { value: "ganjil", title: "Semester Ganjil" },
+    { value: "genap", title: "Semester Genap" },
+  ];
 
-  const dataBaru = [
-    {
-        id: "m5gr84i9",
-        angka: 316,
-        keterangan: "success",
-        mataPelajaran: "ken99@yahoo.com ahahahah ahahahah ahahahah ahahahah hahahah ahahahah",
-    },
-    {
-        id: "3u1reuv4",
-        angka: 242,
-        keterangan: "success",
-        mataPelajaran: "Abe45@gmail.com",
-    },
-    {
-        id: "derv1ws0",
-        angka: 837,
-        keterangan: "processing",
-        mataPelajaran: "Monserrat44@gmail.com",
-    },
-    {
-        id: "5kma53ae",
-        angka: 874,
-        keterangan: "success lalaala hddygtghabdhba bahjs bhjn a hajdnkscgyjvhbn m tgbhjnkhgcvhbj tfyghvbjhgc tfyghjgvbj rfgv 6rtfygvh trfgvhb",
-        mataPelajaran: "Silas22@gmail.com",
-    },
-    {
-        id: "bhqecj4p",
-        angka: 721,
-        keterangan: "failed",
-        mataPelajaran: "carmella@hotmail.com",
-    },
-]
+  const handleSemesterChange = (selectedOption) => {
+    setSelectedSemester(selectedOption);
+    const selectedLabel = dataSemester.find(item => item.value === selectedOption)?.title;
+    setSemesterLabel(selectedLabel || "Semester Ganjil");
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const res = await fetch(`http://localhost:8000/nilai/${nisn}?semester=${selectedSemester}`);
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+      const data = await res.json();
+      setData(data);
+    };
+
+    fetchData();
+  }, [nisn, selectedSemester]);
 
   return (
     <div>
       <div className={styles.header()}>
-        <div className={styles.title()}>Nilai</div>
+        <div className={styles.title()}>Hafalan Siswa</div>
       </div>
       <div className={styles.filterBox()}>
-        <MenuSelect data={data} label={"Pilih Kelas"}/>
-        <MenuSelect data={dataSemester} label={"Pilih Semester"}/>
+        <MenuSelect
+          label={semesterLabel}
+          data={dataSemester}
+          onChange={handleSemesterChange}
+        />
       </div>
-      <div>
-        <TableSemesterDemo data={dataBaru} title={"Semester Ganjil"}/>
+      <div className='m-4'>
+        <div>{semesterLabel}</div>
+        {data ?<DataTableNilai className={styles.tableContainer()} data={data} />: null}
       </div>
     </div>
-  )
+  );
 }
 
 const styles = {
   header: css({
     width: "100%",
-    // backgroundColor: "AliceBlue",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: "20px"
-}),
-title: css({
+  }),
+  title: css({
     width: "50%",
     borderBottom: "2px solid #FDD100",
     padding: "10px 0",
     fontWeight: "bold"
-}),
-filterBox: css({
-  display: "flex",
-  gap: 20,
-})
-}
+  }),
+  tableContainer: css({
+    display: "flex",
+    flexDirection: "column",
+    gap: 20,
+    marginTop: 20,
+  }),
+  filterBox: css({
+    display: "flex",
+    gap: 20,
+  })
+};
