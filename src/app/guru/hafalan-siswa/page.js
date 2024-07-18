@@ -27,7 +27,7 @@ export default function page({ params }) {
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`http://localhost:8000/hafalan/kelas/${id}?bulan=${bulan}&kelas=${kelas}`);
+      const res = await fetch(`http://localhost:8000/hafalan/kelas/${id}?bulan=${bulan}&no_kelas=${kelas}`);
       const data = await res.json();
       setData(data);
     }

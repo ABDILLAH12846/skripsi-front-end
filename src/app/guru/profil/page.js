@@ -1,6 +1,7 @@
 "use client";
 
 import { GlobalContext } from "@/app/layout";
+import GuruProfile from "@/component/guru-profile";
 import SiswaProfile from "@/component/siswa-profile";
 import { DataTableDemo } from "@/component/table";
 import { Button } from "@/components/ui/button";
@@ -31,12 +32,14 @@ export default function Profile({ params }) {
     fetchData();
   }, [nip]);
 
+  console.log({ data })
+
   return (
     <div>
       <div className={styles.header()}>
         <div className={styles.title()}>Profil</div>
       </div>
-      {data ? <SiswaProfile data={data} /> : null}
+      {data ? <GuruProfile data={data} /> : null}
     </div>
   );
 }

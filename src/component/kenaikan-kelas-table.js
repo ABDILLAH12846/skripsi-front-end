@@ -75,6 +75,30 @@ export default function KenaikanKelasTable({ data }) {
             // router.back()
         }
     }
+
+    const addDaftarSiswaTamat = async () => {
+        try {
+            console.log("halllooooo")
+            const result = await fetch("http://localhost:8000/siswa-akhir", {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bodyDaftarSiswa())
+            })
+            if (result.ok) {
+                console.log(result)
+            } else {
+                console.log(result)
+            }
+        } catch (e) {
+            console.log({e})
+        } finally {
+
+            // router.back()
+        }
+    }
+
     const editKelas = async () => {
         try {
             console.log("hallo")
@@ -98,9 +122,43 @@ export default function KenaikanKelasTable({ data }) {
         }
     }
 
+    const addAlumni = async () => {
+        try {
+            console.log("hallo")
+            const result = await fetch(`http://localhost:8000/alumni`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    alumniData: chaval.map((val) => ({
+                        nisn: val.nisn,
+                        nama: val.nama,
+                        tahun_ajaran: data.tahun_ajaran
+                    }))
+                })
+            })
+            if (result.ok) {
+                console.log({result})
+            } else {
+                console.log({result})
+            }
+        } catch (e) {
+            console.log({e})
+        } finally {
+
+            // router.back()
+        }
+    }
+
     const editKelasAndAddDaftarSiswa = async () => {
         await editKelas();
-        await addDaftarSiswa();
+        if (data?.no_kelas == 12) {
+            await addAlumni()
+            await addDaftarSiswaTamat()
+        } else {
+            await addDaftarSiswa();
+        }
       };
     
 

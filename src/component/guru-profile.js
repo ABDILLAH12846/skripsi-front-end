@@ -6,6 +6,9 @@ import { useRouter, usePathname } from 'next/navigation'
 import React from 'react'
 
 export default function GuruProfile({ data }) {
+    const header = React.useMemo(() => {
+        return ["nama", "no_kelas", "nama_kelas",]
+    }, [])
     return (
         <div className={styles.content()}>
             <div className={styles.leftProfile()}>
@@ -20,13 +23,25 @@ export default function GuruProfile({ data }) {
             <div className={styles.righContent()}>
                 <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block"}}>Data Pribadi</h3>
                 <div className={styles.valueBox()}>
-                    {Object.keys(data).map((key) => (
+                    {Object.keys(data).filter((val) => val !== "matapelajaran").map((key) => (
                         <div className={styles.listValue()}>
                             <span style={{ fontWeight: "bold", fontSize: "16px" }}>{key}</span>
                             <span>{data[key] || "-"}</span>
                         </div>
                     ))}
                 </div>
+                {
+                    data.matapelajaran
+                    ?
+                    <>
+                    <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block" }}>Data Mata Pelajaran</h3>
+                    <div style={{ marginBottom: 40 }}>
+                        <DataTableDemo data={data.matapelajaran} header={header}/>
+                    </div>
+                    </>
+                    :
+                    null
+                }
             </div>
         </div>
     )

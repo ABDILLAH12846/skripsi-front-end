@@ -44,6 +44,10 @@ export default function AdminLayout({ children }) {
         title: "Kenaikan Kelas",
         link: "/admin/kenaikan-kelas"
       },
+      {
+        title: "Alumni",
+        link: "/admin/alumni"
+      },
     ]
   }, [])
   return (

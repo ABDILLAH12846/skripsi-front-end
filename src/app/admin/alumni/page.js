@@ -3,61 +3,49 @@
 import { DataTableDemo } from '@/component/table'
 import { Button } from '@/components/ui/button'
 import { css } from '@/utils/stitches.config'
-import { Select } from 'antd'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import React from 'react'
 
-export default function DataSiswa() {
+export default function DataGuru() {
   const router = useRouter();
   const path = usePathname();
   const header = React.useMemo(() => {
-    return ["nama", "nisn", "email","kelas","tahun_ajaran", "no_telepon_orangtua", "nama_orangtua"]
+    return ["nisn", "nama", "angkatan",]
   }, [])
 
   const [data, setData] = React.useState(null);
-  const [status, setStatus] = React.useState("aktif");
+  const dataBaru = data ? data.map((val) => ({
+    ...val,
+    angkatan: val.tahun_ajaran,
+  })) : []
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`http://localhost:8000/siswa?status=${status}`);
+      const res = await fetch('http://localhost:8000/alumni');
       const data = await res.json();
       setData(data);
     }
 
     fetchData();
-  }, [status]);
-
-  const statusOptions = [
-    {
-      label: "Aktif",
-      value: "aktif",
-    },
-    {
-      label: "Non Aktif",
-      value: "non aktif",
-    },
-  ]
-
-  console.log({ data })
+  }, []);
 
   const onClick = (obj) => {
     const keyVal = Object.keys(obj).find((item) => item === "nisn")
     router.push(`/admin/data-siswa/${obj[keyVal]}`)
   }
+
   return (
     <div>
       <div className={styles.header()}>
-        <div className={styles.title()}>Daftar Siswa SMA IT AL IZZAH</div>
-        <Button assChild className={styles.btn()} onClick={() => router.push(`${path}/add`)}>Tambah</Button>
+        <div className={styles.title()}>Daftar Guru SMA IT AL IZZAH</div>
       </div>
       <div>
-        <Select options={statusOptions} defaultValue={status} onChange={(val) => setStatus(val)}/>
         {
           data
-            ?
-            <DataTableDemo data={data} routing={onClick} header={header} />
-            :
-            null
+          ?
+          <DataTableDemo data={dataBaru} header={header} routing={onClick}/>
+          :
+          null
         }
       </div>
     </div>
@@ -71,7 +59,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: "20px"
   }),
   title: css({
     width: "50%",
