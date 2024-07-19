@@ -97,7 +97,7 @@ export default function RaportSiswa() {
                 />
             </div>
             {loading ? <div>Loading...</div> : <DataTableRapor data={data} />}
-            {loading ? <div>Loading...</div> : <DataTableDemo  data={processedData} header={headers} routing={(row) => console.log(row)} />}
+            {loading ? <div>Loading...</div> : <DataTableDemo  data={processedData} header={headers} />}
         </div>
     );
 }

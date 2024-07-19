@@ -24,10 +24,10 @@ import GuruSelect from './guru-select'
 import { Select } from 'antd'
 
 const formSchema = z.object({
-    nomorKelas: z.string(),
-    namaKelas: z.string(),
-    waliKelas: z.string(),
-    tahunAjaran: z.string(),
+    nomorKelas: z.string().min(1, { message: "Tingkat Kelas harus di isi" }),
+    namaKelas: z.string().min(1, { message: "Nama Kelas harus diisi" }),
+    waliKelas: z.string().min(1, { message: "Wali Kelas harus diisi" }),
+    tahunAjaran: z.string().min(1, { message: "Tahun Ajaran harus diisi" }),
 })
 
 export default function KelasForm({ data, dataSiswa }) {

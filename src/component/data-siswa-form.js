@@ -21,29 +21,27 @@ import ButtonSessionForm from './button-session-form'
 import { Select } from 'antd'
 
 const formSchema = z.object({
-    NIPD: z.string(),
-    nisn: z.string(),
-    nama: z.string().min(8, {
-        message: "NIP harus memiliki 8 karakter"
-    }),
-    email: z.string(),
-    jenisKelamin: z.string(),
+    NIPD: z.string().min(1, { message: "NIPD harus diisi" }).regex(/^\d+$/, { message: "NIPD harus berupa angka" }),
+    nisn: z.string().min(1, { message: "NISN harus diisi" }).regex(/^\d+$/, { message: "NISN harus berupa angka" }),
+    nama: z.string().min(8, { message: "NIP harus memiliki 8 karakter" }),
+    email: z.string().email({ message: "Email tidak valid" }),
+    jenisKelamin: z.string().min(1, { message: "Jenis Kelamin harus diisi" }).refine(value => ["Laki-laki", "Perempuan"].includes(value), {
+        message: "Jenis Kelamin harus Laki-laki atau Perempuan" }),
     tanggalLahir: z.string().transform((str) => new Date(str)),
-    tempatLahir: z.string(),
-    alamat: z.string().min(8, {
-        message: "Alamat harus 8 huruf"
-    }),
-    noTelepon: z.string(),
-    password: z.string(),
-    NoKartuKeluarga: z.string(),
-    NIK: z.string(),
+    tempatLahir: z.string().min(1, { message: "Tempat Lahir harus diisi" }),
+    alamat: z.string().min(8, { message: "Alamat harus 8 huruf" }),
+    noTelepon: z.string().regex(/^\d+$/, { message: "Nomor Telepon harus berupa angka" }),
+    password: z.string().min(8, { message: "Password harus minimal 8 karakter" }).regex(/[a-z]/, { message: "Password harus mengandung huruf kecil" })
+        .regex(/[0-9]/, { message: "Password harus mengandung angka" }),
+    NoKartuKeluarga: z.string().regex(/^\d+$/, { message: "No Kartu Keluarga harus berupa angka" }),
+    NIK: z.string().length(16, { message: "NIK harus 16 karakter" }).regex(/^\d+$/, { message: "NIK harus berupa angka" }),
     status: z.string(),
     TerdaftarSebagai: z.string(),
     TanggalMasuk: z.string().transform((str) => new Date(str)),
 })
 
 export default function DataSiswaForm({ data, action }) {
-    console.log({data})
+    console.log({ data })
     const router = useRouter()
     const [status, setStatus] = React.useState(data && data.status ? data.status : "aktif")
     const [daftar, setDaftar] = React.useState(data && data.terdaftar_sebagai ? data.terdaftar_sebagai : "siswa baru")
