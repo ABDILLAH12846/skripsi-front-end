@@ -1,11 +1,12 @@
 import React from 'react'
-import { Drawer, Space, Checkbox, Divider, Alert } from 'antd';
+import { Drawer, Space, Checkbox, Divider, Alert, Input } from 'antd';
 import { Button } from "antd"
 import { useController, useFormContext } from "react-hook-form";
 import { css } from '@/utils/stitches.config';
 
 export default function SiswaSelect({ isDisabled, list, chaval, setChaval }) {
     const [open, setOpen] = React.useState(false)
+    const { Search } = Input;
     const onClose = () => {
         setOpen(false);
     };
@@ -13,6 +14,18 @@ export default function SiswaSelect({ isDisabled, list, chaval, setChaval }) {
     const onChange = (act, val) => {
         act ? setChaval([...chaval, val]) : setChaval(chaval.filter((el) => el.nisn !== val.nisn))
     }
+
+    const [data, setData] = React.useState(null);
+    const [search, setSearch] = React.useState("")
+
+    React.useEffect(() => {
+        async function fetchData() {
+            const res = await fetch(`http://localhost:8000/siswa?status=aktif&search=${search}`);
+            const data = await res.json();
+            setData((data.map((val) => ({ nisn: val.nisn, nama: val.nama, tinggal_kelas: val.tinggal_kelas }))));
+        }
+        fetchData();
+    }, [search]);
 
     return (
         <div>
@@ -28,13 +41,18 @@ export default function SiswaSelect({ isDisabled, list, chaval, setChaval }) {
                             <Checkbox value={val}>{val.nama}</Checkbox>
                         ))}
                     </CheckboxGroup> */}
+                    <Search placeholder="input search text" enterButton="Search" size="large" onSearch={(val) => setSearch(val)} />
+                    <Divider />
+                    {
+                        data
+                        ?
                     <div className={styles.container()}>
                         <div className={styles.wrapper()}>
                             <div className={styles.nisnJudul()}>nisn</div>
                             <div>nama</div>
                         </div>
                         {
-                            list.map((val) => (
+                            data.map((val) => (
                                 <Checkbox style={{ backgroundColor: val.tinggal_kelas === 1 ? "#ffb703" : "white" }} defaultChecked={chaval.find((el) => el.nisn === val.nisn)} onChange={(e) => onChange(e.target.checked, val)} className={styles.selectBox()}>
                                     <div className={styles.wrapper()} >
                                         <div className={styles.nisn()}>{val.nisn}</div>
@@ -44,6 +62,9 @@ export default function SiswaSelect({ isDisabled, list, chaval, setChaval }) {
                             ))
                         }
                     </div>
+                    :
+                    <p>Loadiiiiing......</p>
+                    }
                     <Alert
                     style={{marginTop: 30,}}
                         message="Perhatian"

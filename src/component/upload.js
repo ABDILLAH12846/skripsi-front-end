@@ -1,6 +1,6 @@
 "use client"
-import Gallery from '@/component/photo-svg';
-import GalleryImage from "../../../public/svg/gallery.svg"
+
+import GalleryImage from "../../public/svg/gallery.svg"
 import Image from 'next/image';
 import { Spin } from 'antd';
 // Upload.js
@@ -8,12 +8,11 @@ import { Spin } from 'antd';
 import React, { useState } from 'react';
 import { css } from '@/utils/stitches.config';
 
-export default function Upload() {
+export default function Upload({url, setUrl}) {
   // const [file, setFile] = useState(null);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [ref, setRef] = useState()
-  const [url, setUrl] = useState(null)
 
 
   const handleFileChange = async (e) => {
@@ -50,18 +49,15 @@ export default function Upload() {
   };
 
   return (
-    <div className={styles.wrapper()}>
-      <label for="myfile">Select a file:</label>
-      <div className={styles.container()}>
-        {
-          loading
-            ?
-            <Spin />
-            :
-            <Image src={url ? url : GalleryImage} width={40} height={40} />
-        }
-        <input id="myfile" name="myfile" ref={(val) => setRef(val)} type="file" onChange={handleFileChange} />
-      </div>
+    <div className={styles.container()}>
+      {
+        loading
+          ?
+          <Spin />
+          :
+          <Image src={url ? url : GalleryImage} width={40} height={40} />
+      }
+      <input id="myfile" name="myfile" ref={(val) => setRef(val)} type="file" onChange={handleFileChange} />
     </div>
   );
 };

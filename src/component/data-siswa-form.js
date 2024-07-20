@@ -19,22 +19,31 @@ import { css } from '@/utils/stitches.config'
 import { useRouter } from 'next/navigation'
 import ButtonSessionForm from './button-session-form'
 import { Select } from 'antd'
+import Upload from './upload'
 
 const formSchema = z.object({
-    NIPD: z.string(),
-    nisn: z.string(),
+    NIPD: z.string().min(4, {
+        message: "NIPD harus memiliki minimal 4 karakter"
+    }),
+    nisn: z.string().min(4, {
+        message: "NIP harus memiliki minimal 4 karakter"
+    }),
     nama: z.string().min(8, {
-        message: "NIP harus memiliki 8 karakter"
+        message: "Nama wajib di isi"
     }),
     email: z.string(),
     jenisKelamin: z.string(),
     tanggalLahir: z.string().transform((str) => new Date(str)),
     tempatLahir: z.string(),
     alamat: z.string().min(8, {
-        message: "Alamat harus 8 huruf"
+        message: "Alamat wajib di isi"
     }),
     noTelepon: z.string(),
-    password: z.string(),
+    password: z.string()
+    .min(8, { message: "Password harus memiliki minimal 8 karakter" })
+    .regex(/[A-Z]/, { message: "Password harus mengandung setidaknya satu huruf besar" })
+    .regex(/[a-z]/, { message: "Password harus mengandung setidaknya satu huruf kecil" })
+    .regex(/[0-9]/, { message: "Password harus mengandung setidaknya satu angka" }),
     NoKartuKeluarga: z.string(),
     NIK: z.string(),
     status: z.string(),
@@ -48,6 +57,7 @@ export default function DataSiswaForm({ data, action }) {
     const [status, setStatus] = React.useState(data && data.status ? data.status : "aktif")
     const [daftar, setDaftar] = React.useState(data && data.terdaftar_sebagai ? data.terdaftar_sebagai : "siswa baru")
     const [valid, setValid] = React.useState(data && data.valid ? data.valid : "valid")
+    const [url, setUrl] = React.useState(data && data.url ? data.url : null)
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
@@ -67,6 +77,7 @@ export default function DataSiswaForm({ data, action }) {
                 TanggalMasuk: data?.tanggal_masuk ? new Date(data?.tanggal_masuk).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                 valid: data?.valid,
                 password: data?.password,
+                url: data.url,
             }
         }
         return {
@@ -86,6 +97,7 @@ export default function DataSiswaForm({ data, action }) {
             TanggalMasuk: new Date().toISOString().split('T')[0],
             valid: valid,
             password: "",
+            url: "",
 
         }
     }, [data])
@@ -111,7 +123,8 @@ export default function DataSiswaForm({ data, action }) {
             status,
             terdaftar_sebagai: daftar,
             tanggal_masuk: new Date(data?.TanggalMasuk).toISOString().split('T')[0],
-            valid: valid
+            valid: valid,
+            url,
         }
     )
 
@@ -223,6 +236,10 @@ export default function DataSiswaForm({ data, action }) {
                                                                 ?
                                                                 <Select placeholder="valid" style={{ width: "100%" }} size="large" options={validOptions} onChange={(val) => setValid(val)} defaultValue={valid} />
                                                                 :
+                                                                 value === "url"
+                                                                 ?
+                                                                 <Upload url={url} setUrl={setUrl}/>
+                                                                 :
                                                                 <Input type={value === "tanggalLahir" || value === "TanggalMasuk" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
                                             }
                                         </FormControl>

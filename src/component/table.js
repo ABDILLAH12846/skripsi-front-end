@@ -146,6 +146,7 @@ const dataBaru = [
 // ]
 
 export function DataTableDemo({ data, routing, header }) {
+    console.log({ data })
 
     const columns = React.useMemo(() => {
         return header.map((item) => (
