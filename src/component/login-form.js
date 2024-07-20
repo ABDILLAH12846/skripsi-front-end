@@ -44,7 +44,7 @@ export function LoginForm() {
 
     const onSubmit = async (data) => {
         try {
-            if (data.username === "admin" && data.password === "admin") {
+            if (data.username === "admin" && data.password === "Admin#1234") {
                 const userTemp = { role: "admin" };
                 setUser(userTemp);
                 Cookies.set("user", JSON.stringify(userTemp), { expires: 1 });

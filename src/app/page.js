@@ -2,13 +2,14 @@
 
 import { LoginForm } from "@/component/login-form";
 import { css } from "@/utils/stitches.config";
+import Poster from "../../public/coba.jpeg"
 import Image from "next/image";
 
 export default function Home() {
   return (
     <div className={styles.container()}>
       <div className={styles.kiri()}>
-        <Image style={{objectFit: "contain"}} alt="poster" src="https://smasitalizzah.sch.id/wp-content/uploads/2022/03/juara-1-tilawah-2023-1536x1536.png" layout="responsive" width={100} height={100} />
+        <Image style={{objectFit: "contain"}} alt="poster" src={Poster} layout="responsive" width={100} height={100} />
       </div>
       <div className={styles.kanan()}>
         <LoginForm />
