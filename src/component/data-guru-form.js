@@ -19,25 +19,30 @@ import { useRouter } from 'next/navigation'
 import { css } from '@/utils/stitches.config'
 import ButtonSessionForm from './button-session-form'
 import { Select } from 'antd'
+import Upload from './upload'
 
 const formSchema = z.object({
-    nip: z.string(),
-    nuptk: z.string(),
+    nip: z.string().min(4, { message: "NIP harus memiliki minimal 4 karakter" }),
+    nuptk: z.string().min(4, { message: "NUPTK harus memiliki minimal 4 karakter" }),
     nama: z.string().min(8, {
-        message: "NIP harus memiliki 8 karakter"
+        message: "Nama Wajib di isi"
     }),
     email: z.string(),
     jenisKelamin: z.string(),
     tanggalLahir: z.string().transform((str) => new Date(str)),
     tempatLahir: z.string(),
     alamat: z.string().min(8, {
-        message: "Alamat harus 8 huruf"
+        message: "Alamat harus di isi"
     }),
     noTelepon: z.string(),
     jabatan: z.string(),
     jenjang: z.string(),
     jurusan: z.string(),
-    password: z.string(),
+    password: z.string()
+        .min(8, { message: "Password harus memiliki minimal 8 karakter" })
+        .regex(/[A-Z]/, { message: "Password harus mengandung setidaknya satu huruf besar" })
+        .regex(/[a-z]/, { message: "Password harus mengandung setidaknya satu huruf kecil" })
+        .regex(/[0-9]/, { message: "Password harus mengandung setidaknya satu angka" }),
     NIK: z.string(),
     TanggalMulaiTugas: z.string().transform((str) => new Date(str)),
     NoKartuKeluarga: z.string(),
@@ -48,6 +53,7 @@ export default function DataGuruForm({ data, action }) {
     const [valid, setValid] = React.useState(data && data?.valid ? data?.valid : "valid")
     const [status, setStatus] = React.useState(data && data.status ? data.status : "aktif")
     const [kepegawaian, setKepegawaian] = React.useState(data && data.status_kepegawaian ? data.status_kepegawaian : "guru tetap yayasan")
+    const [url, setUrl] = React.useState(data?.url ? data?.url : null)
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
@@ -70,6 +76,7 @@ export default function DataGuruForm({ data, action }) {
                 valid: data?.valid,
                 NoKartuKeluarga: data?.No_KK,
                 password: data?.password,
+                url: data?.url,
             }
         }
         return {
@@ -92,6 +99,7 @@ export default function DataGuruForm({ data, action }) {
             valid: valid,
             NoKartuKeluarga: "",
             password: "",
+            url: ""
         }
     }, [data])
     const form = useForm({
@@ -119,7 +127,8 @@ export default function DataGuruForm({ data, action }) {
             status: status,
             valid: valid,
             password: data?.password,
-            No_KK: data?.NoKartuKeluarga
+            No_KK: data?.NoKartuKeluarga,
+            url: url,
         }
     )
 
@@ -196,7 +205,7 @@ export default function DataGuruForm({ data, action }) {
             label: "Tidak Valid",
             value: "tidak valid"
         },
-    
+
     ]
     const kepegawaianOptions = [
         {
@@ -236,28 +245,32 @@ export default function DataGuruForm({ data, action }) {
                                                     : value === "jabatan"
                                                         ?
                                                         <div>
-                                                            <Select placeholder="Jabatan" style={{ width: "100%" }} size='large' options={jabatanOptions} onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null}/>
+                                                            <Select placeholder="Jabatan" style={{ width: "100%" }} size='large' options={jabatanOptions} onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null} />
                                                         </div>
                                                         :
                                                         value === "status"
-                                                        ?
-                                                        <div>
-                                                            <Select placeholder="Status" style={{ width: "100%" }} size='large' options={statusOptions} onChange={(val) => setStatus(val)} defaultValue={status}/>
-                                                        </div>
-                                                        :
-                                                        value === "valid"
-                                                        ?
-                                                        <div>
-                                                            <Select placeholder="Valid" style={{ width: "100%" }} size='large' options={validOptions} onChange={(val) => setValid(val)} defaultValue={valid}/>
-                                                        </div>
-                                                        :
-                                                        value === "statusKepegawaian"
-                                                        ?
-                                                        <div>
-                                                            <Select placeholder="Status Kepegawaian" style={{ width: "100%" }} size='large' options={kepegawaianOptions} onChange={(val) => setKepegawaian(val)} defaultValue={kepegawaian}/>
-                                                        </div>
-                                                        :
-                                                        <Input type={value === "tanggalLahir" || value === "TanggalMulaiTugas"? "date" : value === "email" ? "email" : "text"} placeholder={`masukkan ${value} anda di dini`} {...field} value={field.value} />
+                                                            ?
+                                                            <div>
+                                                                <Select placeholder="Status" style={{ width: "100%" }} size='large' options={statusOptions} onChange={(val) => setStatus(val)} defaultValue={status} />
+                                                            </div>
+                                                            :
+                                                            value === "valid"
+                                                                ?
+                                                                <div>
+                                                                    <Select placeholder="Valid" style={{ width: "100%" }} size='large' options={validOptions} onChange={(val) => setValid(val)} defaultValue={valid} />
+                                                                </div>
+                                                                :
+                                                                value === "statusKepegawaian"
+                                                                    ?
+                                                                    <div>
+                                                                        <Select placeholder="Status Kepegawaian" style={{ width: "100%" }} size='large' options={kepegawaianOptions} onChange={(val) => setKepegawaian(val)} defaultValue={kepegawaian} />
+                                                                    </div>
+                                                                    :
+                                                                    value === "url"
+                                                                        ?
+                                                                        <Upload url={url} setUrl={setUrl} />
+                                                                        :
+                                                                        <Input type={value === "tanggalLahir" || value === "TanggalMulaiTugas" ? "date" : value === "email" ? "email" : "text"} placeholder={`masukkan ${value} anda di dini`} {...field} value={field.value} />
                                             }
                                         </FormControl>
                                         <FormMessage />

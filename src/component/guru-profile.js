@@ -4,6 +4,7 @@ import { css } from '@/utils/stitches.config'
 import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import React from 'react'
+import GalleryImage from "../../public/svg/gallery.svg"
 
 export default function GuruProfile({ data }) {
     const header = React.useMemo(() => {
@@ -13,7 +14,7 @@ export default function GuruProfile({ data }) {
         <div className={styles.content()}>
             <div className={styles.leftProfile()}>
                 <div>
-                    <Image src={"https://images.unsplash.com/photo-1703853188877-ead118e71539?q=80&w=1554&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} width={100} height={100} />
+                    <Image src={data?.url ? data?.url : GalleryImage} width={100} height={100} />
                 </div>
                 <div className={styles.leftProfileContent()}>
                     <span style={{ fontSize: "14px" }}>{data?.nip}</span>
@@ -23,7 +24,7 @@ export default function GuruProfile({ data }) {
             <div className={styles.righContent()}>
                 <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block"}}>Data Pribadi</h3>
                 <div className={styles.valueBox()}>
-                    {Object.keys(data).filter((val) => val !== "matapelajaran").map((key) => (
+                    {Object.keys(data).filter((val) => val !== "matapelajaran" && val !== "url").map((key) => (
                         <div className={styles.listValue()}>
                             <span style={{ fontWeight: "bold", fontSize: "16px" }}>{key}</span>
                             <span>{data[key] || "-"}</span>
