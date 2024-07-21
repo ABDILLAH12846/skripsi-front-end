@@ -1,109 +1,78 @@
-import React, { useMemo, useState } from 'react';
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  flexRender,
-} from '@tanstack/react-table';
+"use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import React from 'react';
 
-export function DataTableHafalan({ data, header }) {
-  console.log('Received Data in DataTableHafalan:', data);
+export function DataTableHafalan({ data }) {
+  const headers = ["Bulan", "Minggu 1", "Minggu 2", "Minggu 3", "Minggu 4"];
 
-  const [sorting, setSorting] = useState([]);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [rowSelection, setRowSelection] = useState({});
+  const processedData = data.reduce((acc, item) => {
+    let entry = acc.find(entry => entry.bulan === item.bulan);
 
-  const columns = useMemo(() => {
-    return header.map(item => ({
-      accessorKey: item,
-      header: item,
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue(item)}</div>
-      ),
-    }));
-  }, [header]);
+    if (!entry) {
+      entry = {
+        bulan: item.bulan,
+        Minggu1: '',
+        Minggu2: '',
+        Minggu3: '',
+        Minggu4: ''
+      };
+      acc.push(entry);
+    }
 
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  });
+    switch (item.minggu) {
+      case '1':
+        entry.Minggu1 = item.hafalan;
+        break;
+      case '2':
+        entry.Minggu2 = item.hafalan;
+        break;
+      case '3':
+        entry.Minggu3 = item.hafalan;
+        break;
+      case '4':
+        entry.Minggu4 = item.hafalan;
+        break;
+      default:
+        break;
+    }
+
+    return acc;
+  }, []);
+
+  const formatValue = (value) => {
+    return value === null || value === 0 ? "-" : value;
+  };
 
   return (
-    <div className="w-full">
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                  </TableHead>
-                ))}
-              </TableRow>
+    <div className='w-full rounded-md border m-2'>
+      <table className='w-full'>
+        <thead>
+          <tr>
+            {headers.map((header, index) => (
+              <th key={index} className="p-2 border">{header}</th>
             ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+          </tr>
+        </thead>
+        <tbody>
+          {processedData.length > 0 ? (
+            processedData.map((item, index) => (
+              <tr key={index}>
+                <td className="p-2 border text-center">{item.bulan}</td>
+                <td className="p-2 border text-center">{formatValue(item.Minggu1)}</td>
+                <td className="p-2 border text-center">{formatValue(item.Minggu2)}</td>
+                <td className="p-2 border text-center">{formatValue(item.Minggu3)}</td>
+                <td className="p-2 border text-center">{formatValue(item.Minggu4)}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={headers.length} className="p-2 border text-center">
+                No data available
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

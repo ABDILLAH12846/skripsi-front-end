@@ -19,19 +19,21 @@ import { css } from '@/utils/stitches.config'
 import { useRouter } from 'next/navigation'
 import ButtonSessionForm from './button-session-form'
 import { Select } from 'antd'
+import Upload from './upload'
 
 const formSchema = z.object({
     NIPD: z.string().min(1, { message: "NIPD harus diisi" }).regex(/^\d+$/, { message: "NIPD harus berupa angka" }),
     nisn: z.string().min(1, { message: "NISN harus diisi" }).regex(/^\d+$/, { message: "NISN harus berupa angka" }),
     nama: z.string().min(8, { message: "NIP harus memiliki 8 karakter" }),
     email: z.string().email({ message: "Email tidak valid" }),
-    jenisKelamin: z.string().min(1, { message: "Jenis Kelamin harus diisi" }).refine(value => ["Laki-laki", "Perempuan"].includes(value), {
-        message: "Jenis Kelamin harus Laki-laki atau Perempuan" }),
+    jenisKelamin: z.string().min(1, { message: "Jenis Kelamin harus diisi" }),
     tanggalLahir: z.string().transform((str) => new Date(str)),
     tempatLahir: z.string().min(1, { message: "Tempat Lahir harus diisi" }),
     alamat: z.string().min(8, { message: "Alamat harus 8 huruf" }),
     noTelepon: z.string().regex(/^\d+$/, { message: "Nomor Telepon harus berupa angka" }),
-    password: z.string().min(8, { message: "Password harus minimal 8 karakter" }).regex(/[a-z]/, { message: "Password harus mengandung huruf kecil" })
+    password: z.string().min(8, { message: "Password harus minimal 8 karakter" })
+        .regex(/[A-Z]/, { message: "Password harus mengandung huruf besar" })
+        .regex(/[a-z]/, { message: "Password harus mengandung huruf kecil" })
         .regex(/[0-9]/, { message: "Password harus mengandung angka" }),
     NoKartuKeluarga: z.string().regex(/^\d+$/, { message: "No Kartu Keluarga harus berupa angka" }),
     NIK: z.string().length(16, { message: "NIK harus 16 karakter" }).regex(/^\d+$/, { message: "NIK harus berupa angka" }),
@@ -46,6 +48,7 @@ export default function DataSiswaForm({ data, action }) {
     const [status, setStatus] = React.useState(data && data.status ? data.status : "aktif")
     const [daftar, setDaftar] = React.useState(data && data.terdaftar_sebagai ? data.terdaftar_sebagai : "siswa baru")
     const [valid, setValid] = React.useState(data && data.valid ? data.valid : "valid")
+    const [url, setUrl] = React.useState(data && data.url ? data.url : null)
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
@@ -65,6 +68,7 @@ export default function DataSiswaForm({ data, action }) {
                 TanggalMasuk: data?.tanggal_masuk ? new Date(data?.tanggal_masuk).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                 valid: data?.valid,
                 password: data?.password,
+                url: data.url,
             }
         }
         return {
@@ -84,6 +88,7 @@ export default function DataSiswaForm({ data, action }) {
             TanggalMasuk: new Date().toISOString().split('T')[0],
             valid: valid,
             password: "",
+            url: "",
 
         }
     }, [data])
@@ -109,7 +114,8 @@ export default function DataSiswaForm({ data, action }) {
             status,
             terdaftar_sebagai: daftar,
             tanggal_masuk: new Date(data?.TanggalMasuk).toISOString().split('T')[0],
-            valid: valid
+            valid: valid,
+            url,
         }
     )
 
@@ -221,6 +227,10 @@ export default function DataSiswaForm({ data, action }) {
                                                                 ?
                                                                 <Select placeholder="valid" style={{ width: "100%" }} size="large" options={validOptions} onChange={(val) => setValid(val)} defaultValue={valid} />
                                                                 :
+                                                                 value === "url"
+                                                                 ?
+                                                                 <Upload url={url} setUrl={setUrl}/>
+                                                                 :
                                                                 <Input type={value === "tanggalLahir" || value === "TanggalMasuk" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
                                             }
                                         </FormControl>

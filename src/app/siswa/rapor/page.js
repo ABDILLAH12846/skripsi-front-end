@@ -25,6 +25,7 @@ export default function RaportSiswa() {
     const [selectedKelas, setSelectedKelas] = useState("10");
     const [kelasLabel] = useState("Kelas X");
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const dataSemester = [
         { value: "ganjil", title: "Semester Ganjil" },
@@ -48,15 +49,20 @@ export default function RaportSiswa() {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
+            setError(null);
             try {
                 const res = await fetch(`http://localhost:8000/raport/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`);
                 if (!res.ok) {
                     throw new Error(`HTTP error! Status: ${res.status}`);
                 }
                 const data = await res.json();
-                setData(data);
+                if (data.message === 'No available data') {
+                    setError('No available data');
+                } else {
+                    setData(data);
+                }
             } catch (error) {
-                console.error("Error fetching data:", error);
+                setError(error.message);
             } finally {
                 setLoading(false);
             }
@@ -67,24 +73,26 @@ export default function RaportSiswa() {
 
     const headers = ["Mata Pelajaran", "Nilai Akhir", "Capaian Kompetensi"];
 
-    const processedData = data.reduce((acc, item) => {
-        let entry = acc.find(entry => entry.matapelajaran === item.nama_matapelajaran);
-    
-        if (!entry) {
-            entry = {
+    const processedData = data.length > 0 ? data.reduce((acc, item) => {
+        const existingEntry = acc.find(entry => entry["Mata Pelajaran"] === item.nama_matapelajaran);
+
+        if (existingEntry) {
+            existingEntry["Nilai Akhir"] = formatValue(item.UAS);
+            existingEntry["Capaian Kompetensi"] = formatValue(item.capaian_kompetensi);
+        } else {
+            acc.push({
                 "Mata Pelajaran": item.nama_matapelajaran,
                 "Nilai Akhir": formatValue(item.UAS),
                 "Capaian Kompetensi": formatValue(item.capaian_kompetensi),
-            };
-            acc.push(entry);
+            });
         }
-    
+
         return acc;
-    }, []);
+    }, []) : [];
 
     return (
         <div>
-            <div className="flex gap-5 p-4">
+            <div className="flex gap-5 mb-4">
                 <MenuSelect
                     label={kelasLabel}
                     data={dataKelas}
@@ -96,8 +104,36 @@ export default function RaportSiswa() {
                     onChange={handleSemesterChange}
                 />
             </div>
-            {loading ? <div>Loading...</div> : <DataTableRapor data={data} />}
-            {loading ? <div>Loading...</div> : <DataTableDemo  data={processedData} header={headers} />}
+            {loading ? (
+                <div>Loading...</div>
+            ) : error ? (
+                <div>{error}</div>
+            ) : (
+                <>
+                    <DataTableRapor data={data} />
+                    <DataTableDemo data={processedData} header={headers} />
+                    {data.length > 0 && (
+                        <div className='flex gap-5 mt-4'>
+                            <table className='border'>
+                                <tbody>
+                                    <tr>
+                                        <th className='p-2 border'>Hadir</th>
+                                        <td className='p-2 border text-center'>{formatValue(data[0].hadir)}</td>
+                                    </tr>
+                                    <tr>
+                                        <th className='p-2 border'>Sakit</th>
+                                        <td className='p-2 border text-center'>{formatValue(data[0].sakit)}</td>
+                                    </tr>
+                                    <tr>
+                                        <th className='p-2 border'>Tanpa Keterangan</th>
+                                        <td className='p-2 border text-center'>{formatValue(data[0].absen)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     );
 }

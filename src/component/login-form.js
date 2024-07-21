@@ -24,7 +24,11 @@ const formSchema = z.object({
     username: z.string().min(2, {
         message: "Username must be at least 2 characters.",
     }),
-    password: z.string(),
+    password: z.string()
+    .min(8, { message: "Password harus memiliki minimal 8 karakter" })
+    .regex(/[A-Z]/, { message: "Password harus mengandung setidaknya satu huruf besar" })
+    .regex(/[a-z]/, { message: "Password harus mengandung setidaknya satu huruf kecil" })
+    .regex(/[0-9]/, { message: "Password harus mengandung setidaknya satu angka" }),
 });
 
 export function LoginForm() {
@@ -40,7 +44,7 @@ export function LoginForm() {
 
     const onSubmit = async (data) => {
         try {
-            if (data.username === "admin" && data.password === "admin") {
+            if (data.username === "admin" && data.password === "Admin#1234") {
                 const userTemp = { role: "admin" };
                 setUser(userTemp);
                 Cookies.set("user", JSON.stringify(userTemp), { expires: 1 });
