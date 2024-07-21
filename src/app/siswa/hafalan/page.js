@@ -27,31 +27,22 @@ export default function HafalanSiswa() {
     { value: "12", title: "Kelas XII" },
   ];
 
-  const transformData = (hafalanData) => {
-    return hafalanData.map(entry => {
-      return {
-        bulan: entry.bulan,
-        minggu1: entry.minggu[0].hafalan,
-        minggu2: entry.minggu[1].hafalan,
-        minggu3: entry.minggu[2].hafalan,
-        minggu4: entry.minggu[3].hafalan,
-      };
-    });
-  };
-
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:8000/hafalan/siswa/${nisn}?no_kelas=${selectedKelas}&bulan=${1}`);
-        const result = await res.json();
-        setData(transformData(result.hafalan));
-      } catch (err) {
-        setError(err);
+        const res = await fetch(`http://localhost:8000/siswa/hafalan/${nisn}?no_kelas=${selectedKelas}`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        const data = await res.json();
+        setData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchData();
   }, [nisn, selectedKelas]);
@@ -59,14 +50,6 @@ export default function HafalanSiswa() {
   const handleKelasChange = (selectedOption) => {
     setSelectedKelas(selectedOption);
   };
-
-  const header = useMemo(() => [
-    "bulan",
-    "minggu1",
-    "minggu2",
-    "minggu3",
-    "minggu4"
-  ], []);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -81,7 +64,7 @@ export default function HafalanSiswa() {
       </div>
       <div className={styles.tableContainer()}>
         {
-          data ? <DataTableHafalan data={data} header={header} /> : null
+          data ? <DataTableHafalan data={data}/> : null
         }
       </div>
     </div>

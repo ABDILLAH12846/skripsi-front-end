@@ -22,30 +22,25 @@ import { Select } from 'antd'
 import Upload from './upload'
 
 const formSchema = z.object({
-    nip: z.string().min(4, { message: "NIP harus memiliki minimal 4 karakter" }),
-    nuptk: z.string().min(4, { message: "NUPTK harus memiliki minimal 4 karakter" }),
-    nama: z.string().min(8, {
-        message: "Nama Wajib di isi"
-    }),
-    email: z.string(),
-    jenisKelamin: z.string(),
+    nip: z.string().min(1, { message: "NIP harus diisi" }).regex(/^\d+$/, { message: "NIP harus berupa angka" }),
+    nuptk: z.string().min(1, { message: "NUPTK harus diisi" }).regex(/^\d+$/, { message: "NUPTK harus berupa angka" }),
+    nama: z.string().min(1, { message: "Nama harus diisi" }),
+    email: z.string().email({ message: "Email tidak valid" }),
+    jenisKelamin: z.string().min(1, { message: "Jenis Kelamin harus diisi" }),
     tanggalLahir: z.string().transform((str) => new Date(str)),
-    tempatLahir: z.string(),
-    alamat: z.string().min(8, {
-        message: "Alamat harus di isi"
-    }),
-    noTelepon: z.string(),
-    jabatan: z.string(),
-    jenjang: z.string(),
-    jurusan: z.string(),
-    password: z.string()
-        .min(8, { message: "Password harus memiliki minimal 8 karakter" })
-        .regex(/[A-Z]/, { message: "Password harus mengandung setidaknya satu huruf besar" })
-        .regex(/[a-z]/, { message: "Password harus mengandung setidaknya satu huruf kecil" })
-        .regex(/[0-9]/, { message: "Password harus mengandung setidaknya satu angka" }),
-    NIK: z.string(),
+    tempatLahir: z.string().min(1, { message: "Tempat Lahir harus diisi" }),
+    alamat: z.string().min(8, { message: "Alamat harus 8 huruf" }),
+    noTelepon: z.string().regex(/^\d+$/, { message: "Nomor Telepon harus berupa angka" }),
+    jabatan: z.string().min(1, { message: "Jabatan harus diisi" }),
+    jenjang: z.string().min(1, { message: "Jenjang harus diisi" }),
+    jurusan: z.string().min(1, { message: "Jurusan harus diisi" }),
+    password: z.string().min(8, { message: "Password harus minimal 8 karakter" })
+        .regex(/[A-Z]/, { message: "Password harus mengandung huruf besar" })
+        .regex(/[a-z]/, { message: "Password harus mengandung huruf kecil" })
+        .regex(/[0-9]/, { message: "Password harus mengandung angka" }),
+    NIK: z.string().length(16, { message: "NIK harus 16 karakter" }).regex(/^\d+$/, { message: "NIK harus berupa angka" }),
     TanggalMulaiTugas: z.string().transform((str) => new Date(str)),
-    NoKartuKeluarga: z.string(),
+    NoKartuKeluarga: z.string().regex(/^\d+$/, { message: "No Kartu Keluarga harus berupa angka" }),
 })
 
 export default function DataGuruForm({ data, action }) {

@@ -3,26 +3,19 @@
 import React from 'react';
 import { css } from '@/utils/stitches.config';
 
-const UTC_OFFSET = 7 * 60 * 60 * 1000; // 7 hours in milliseconds
-
 export function AbsensiTable({ data, currentDate }) {
   const getDaysInMonth = (month, year) => {
-    return new Date(Date.UTC(year, month, 0)).getDate();
-  };
-
-  const adjustForUTCOffset = (date) => {
-    return new Date(date.getTime() + UTC_OFFSET);
+    return new Date(year, month, 0).getDate();
   };
 
   const generateDays = (month, year, absences = []) => {
     const days = [];
     const daysInMonth = getDaysInMonth(month, year);
     for (let day = 1; day <= daysInMonth; day++) {
-      // Create date in UTC and adjust for UTC+7
-      const date = adjustForUTCOffset(new Date(Date.UTC(year, month - 1, day)));
+      const date = new Date(year, month - 1, day);
       const dateStr = date.toISOString().split('T')[0];
       let status;
-      if (date.getUTCDay() === 0) {
+      if (date.getDay() === 0) {
         status = "sunday";
       } else {
         const absence = absences.find(a => a.tanggal === dateStr);
