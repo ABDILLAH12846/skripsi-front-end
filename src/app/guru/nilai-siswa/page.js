@@ -52,6 +52,8 @@ export default function page({ params }) {
     }
   }
 
+  console.log({data})
+
   const header = React.useMemo(() => {
     return ["nama", "nisn", "uts", "uas", "uha","th"]
   }, [])
