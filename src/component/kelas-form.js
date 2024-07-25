@@ -218,7 +218,7 @@ export default function KelasForm({ data, dataSiswa }) {
                                             {
                                                 value === "waliKelas"
                                                     ?
-                                                    <GuruSelect onChange={(val) => field.onChange(val.value.toString())} defaultValue={field.value} />
+                                                    <GuruSelect onChange={(val) => field.onChange(val.value.toString())} defaultValue={data?.wali_kelas} />
                                                     : value === "nomorKelas"
                                                         ?
                                                         <Select style={{ width: "100%" }} options={kelasOptions} placeholder="Pilih Kelas" size="large" onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null} />

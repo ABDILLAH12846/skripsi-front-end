@@ -10,23 +10,35 @@ export default function DataGuru() {
   const router = useRouter();
   const path = usePathname();
   const header = React.useMemo(() => {
-    return ["matapelajaran", "namakelas", "gurupengampu",]
+    return ["no", "mata_pelajaran",]
+  }, [])
+  const headerRoster = React.useMemo(() => {
+    return ["no", "mata_pelajaran", "kelas" , "guru",]
   }, [])
   const [data, setData] = React.useState(null);
+  const [dataRoster, setDataRoster] = React.useState(null);
+  
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch('http://localhost:8000/mata-pelajaran');
+      const res = await fetch('http://localhost:8000/matapelajaran');
       const data = await res.json();
       setData(data);
     }
+    async function fetchDataRoster() {
+      const res = await fetch('http://localhost:8000/roster');
+      const data = await res.json();
+      setDataRoster(data);
+    }
 
     fetchData();
+    fetchDataRoster()
   }, []);
+  console.log({data})
 
   const onClick = (obj) => {
     const keyVal = Object.keys(obj).find((item) => item === "id_matapelajaran")
-    router.push(`/admin/mata-pelajaran/${obj[keyVal]}`)
+    router.push(`/admin/mata-pelajaran/edit?idMapel=${obj[keyVal]}`)
   }
   return (
     <div>
@@ -38,11 +50,21 @@ export default function DataGuru() {
         {
           data
             ?
-            <DataTableDemo data={data} routing={onClick} header={header} />
+            <DataTableDemo data={data.map((val, idx) => ({no: idx+1, mata_pelajaran: val.nama, id_matapelajaran: val.id_matapelajaran}))} routing={onClick} header={header} />
             :
             null
-        }
+          }
       </div>
+      <div onClick={() => router.push("/admin/mata-pelajaran/add-roster")}>Kelola Roster</div>
+      <>
+      {
+        dataRoster
+        ?
+        <DataTableDemo data={dataRoster.map((val, idx) => ({no: idx+1, ...val, kelas: `${val.no_kelas} ${val.nama_kelas}` }))} routing={onClick} header={headerRoster} />
+        :
+        null
+      }
+      </>
     </div>
   )
 }
