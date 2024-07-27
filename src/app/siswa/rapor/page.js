@@ -21,6 +21,7 @@ export default function RaportSiswa() {
 
     const [nilaiData, setNilai] = useState([]);
     const [absensiData, setAbsensi] = useState([]);
+    const [HafalanData, setHafalan] = useState();
     const [selectedSemester, setSelectedSemester] = useState("ganjil");
     const [semesterLabel] = useState("Semester Ganjil");
     const [selectedKelas, setSelectedKelas] = useState("10");
@@ -52,14 +53,16 @@ export default function RaportSiswa() {
             setLoading(true);
             setError(null);
             try {
-                const [nilaiRes, absensiRes] = await Promise.all([
+                const [nilaiRes, absensiRes, hafalan] = await Promise.all([
                     fetch(`http://localhost:8000/raport/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`),
-                    fetch(`http://localhost:8000/rapor/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`)
+                    fetch(`http://localhost:8000/rapor/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`),
+                    fetch(`http://localhost:8000/rapor-hafalan/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`)
                 ]);
-                if (!nilaiRes.ok || !absensiRes.ok) {
+                if (!nilaiRes.ok || !absensiRes.ok || !hafalan.ok) {
                     throw new Error(`Failed to fetch data`);
                 }
-                const [nilaiData, absensiData] = await Promise.all([nilaiRes.json(), absensiRes.json()]);
+                const [nilaiData, absensiData, dataHafalan] = await Promise.all([nilaiRes.json(), absensiRes.json(), hafalan.json()]);
+                console.log(dataHafalan)
                 if (nilaiData.message === 'No available nilai data') {
                     setError('No available nilai data');
                 } else {
@@ -69,6 +72,11 @@ export default function RaportSiswa() {
                     setError('No available absensi data');
                 } else {
                     setAbsensi(absensiData);
+                }
+                if (dataHafalan.message === 'No available hafalan data') {
+                    setError('No available hafalan data');
+                } else {
+                    setHafalan(dataHafalan);
                 }
             } catch (error) {
                 setError(error.message);
@@ -190,6 +198,14 @@ export default function RaportSiswa() {
                                 </div>
                             ))}
                         </div>
+                    </div>
+                    <div>
+                        {HafalanData.length < 1 ? (<div>No Data</div>) : (
+                            <table className='w-full'>
+                                <thead><th className='p-2 border text-center'>Batas Hafalan</th></thead>
+                                <tbody><tb className='p-2 border text-center'>{HafalanData.hafalan}</tb></tbody>
+                            </table>
+                        )}
                     </div>
                 </>
             )}

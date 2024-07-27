@@ -1,10 +1,12 @@
 "use client"
 
 import React from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams , useRouter } from 'next/navigation'
 import OrangTuaForm from '@/component/orangtua-form';
+import DeleteButton from '@/component/delete-button-dialog';
 
 export default function page() {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const idOrtu = searchParams.get("idOrtu")
     const statusOrtu = searchParams.get("status")
@@ -28,12 +30,26 @@ export default function page() {
       fetchData();
       fetchDataSiswa();
     }, []);
+
+    const handleDelete = async () => {
+      try{
+  
+        await fetch(`http://localhost:8000/orangtua/${data.idOrtu}`, {
+          method: 'DELETE'
+        })  
+      } finally {
+        router.back()
+      }
+    }
   return (
     <div>
         {
             data && dataSiswa
             ?
+            <>
+            <div className='flex justify-end'><DeleteButton  handleDelete={handleDelete}/></div>
             <OrangTuaForm data={data} dataSiswa={dataSiswa} />
+            </>
             :
             null
         }

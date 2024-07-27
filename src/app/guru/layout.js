@@ -34,6 +34,10 @@ export default function GuruLayout({ children }) {
           title: "Rapor Siswa",
           link: "/guru/rapor-siswa"
         },
+        {
+          title: "Sikap Siswa",
+          link: "/guru/sikap"
+        },
       ]
     } else {
       return [
