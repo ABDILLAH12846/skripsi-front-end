@@ -58,7 +58,7 @@ export default function GuruLayout({ children }) {
         <Menu listLink={listMenuAdmin} />
       </div>
       <div className={styles.right()}>
-        <h1 style={{margin: "20px 0",fontSize: 18}}>Selamat Datang Admin</h1>
+        <h1 style={{margin: "20px 0",fontSize: 18}}>Selamat Datang Guru</h1>
         <div className={styles.content()}>
         {children}
         </div>

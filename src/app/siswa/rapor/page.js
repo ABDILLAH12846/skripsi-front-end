@@ -187,25 +187,46 @@ export default function RaportSiswa() {
                         <div>
                             <DataTableDemo data={processedDataSpiritual} header={headersSpiritual} />
                             {processedDataSpiritual.map((item, index) => (
-                                <div key={index} className='mb-5'>
+                                <div key={index} className='mb-5 border'>
                                     <strong>Deskripsi :</strong> {item.Deskripsi}
                                 </div>
                             ))}
                             <DataTableDemo data={processedDataSosial} header={headersSosial} />
                             {processedDataSosial.map((item, index) => (
-                                <div key={index} className='mb-5'>
+                                <div key={index} className='mb-5 border'>
                                     <strong>Deskripsi :</strong> {item.Deskripsi}
                                 </div>
                             ))}
                         </div>
                     </div>
                     <div>
-                        {HafalanData.length < 1 ? (<div>No Data</div>) : (
-                            <table className='w-full'>
-                                <thead><th className='p-2 border text-center'>Batas Hafalan</th></thead>
-                                <tbody><tb className='p-2 border text-center'>{HafalanData.hafalan}</tb></tbody>
-                            </table>
+                        {HafalanData.length < 1 ? (
+                            <div>No Data</div>
+                        ) : (
+                            <>
+                                <table className='w-full border-collapse mt-2'>
+                                    <thead>
+                                        <tr>
+                                            <th className='p-2 border text-center'>Batas Hafalan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td className='p-2 border text-center'>{HafalanData.hafalan}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div className='mt-4 p-4 border w-full'>
+                                    <textarea
+                                        className='w-full'
+                                        value={HafalanData.catatan_guru}
+                                        readOnly
+                                        rows={3}
+                                    />
+                                </div>
+                            </>
                         )}
+
                     </div>
                 </>
             )}
