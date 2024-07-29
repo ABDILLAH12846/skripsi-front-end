@@ -16,8 +16,9 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React from "react";
+import React, { useState } from "react";
 import { GlobalContext } from "@/app/layout";
+import { Icon } from "lucide-react";
 
 // Perbarui skema validasi untuk memasukkan validasi password
 const formSchema = z.object({
@@ -33,6 +34,7 @@ const formSchema = z.object({
 
 export function LoginForm() {
     const { user, setUser } = React.useContext(GlobalContext);
+    const [passwordVisible, setObscure] = useState(false);
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -79,6 +81,10 @@ export function LoginForm() {
         }
     };
 
+    const obscure = () => {
+        setObscure(!passwordVisible);
+    };
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -105,7 +111,20 @@ export function LoginForm() {
                         <FormItem>
                             <FormLabel>Sandi</FormLabel>
                             <FormControl>
-                                <Input type="password" placeholder="masukkan kata sandi" {...field} />
+                                <div className="relative">
+                                    <Input 
+                                        type={passwordVisible ? "text" : "password"}
+                                        placeholder="masukkan kata sandi" 
+                                        {...field} 
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute inset-y-0 right-0 px-3 py-1 text-sm leading-tight"
+                                        onClick={obscure}
+                                    >
+                                        {passwordVisible ? "~" : "👁"}
+                                    </button>
+                                </div>
                             </FormControl>
                             <FormMessage />
                         </FormItem>

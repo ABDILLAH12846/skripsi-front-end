@@ -19,7 +19,9 @@ export default function RaportSiswa() {
 
     const { nisn } = user.user;
 
-    const [data, setData] = useState([]);
+    const [nilaiData, setNilai] = useState([]);
+    const [absensiData, setAbsensi] = useState([]);
+    const [HafalanData, setHafalan] = useState();
     const [selectedSemester, setSelectedSemester] = useState("ganjil");
     const [semesterLabel] = useState("Semester Ganjil");
     const [selectedKelas, setSelectedKelas] = useState("10");
@@ -51,15 +53,30 @@ export default function RaportSiswa() {
             setLoading(true);
             setError(null);
             try {
-                const res = await fetch(`http://localhost:8000/raport/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`);
-                if (!res.ok) {
-                    throw new Error(`HTTP error! Status: ${res.status}`);
+                const [nilaiRes, absensiRes, hafalan] = await Promise.all([
+                    fetch(`http://localhost:8000/raport/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`),
+                    fetch(`http://localhost:8000/rapor/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`),
+                    fetch(`http://localhost:8000/rapor-hafalan/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`)
+                ]);
+                if (!nilaiRes.ok || !absensiRes.ok || !hafalan.ok) {
+                    throw new Error(`Failed to fetch data`);
                 }
-                const data = await res.json();
-                if (data.message === 'No available data') {
-                    setError('No available data');
+                const [nilaiData, absensiData, dataHafalan] = await Promise.all([nilaiRes.json(), absensiRes.json(), hafalan.json()]);
+                console.log(dataHafalan)
+                if (nilaiData.message === 'No available nilai data') {
+                    setError('No available nilai data');
                 } else {
-                    setData(data);
+                    setNilai(nilaiData);
+                }
+                if (absensiData.message === 'No available absensi data') {
+                    setError('No available absensi data');
+                } else {
+                    setAbsensi(absensiData);
+                }
+                if (dataHafalan.message === 'No available hafalan data') {
+                    setError('No available hafalan data');
+                } else {
+                    setHafalan(dataHafalan);
                 }
             } catch (error) {
                 setError(error.message);
@@ -71,9 +88,11 @@ export default function RaportSiswa() {
         fetchData();
     }, [nisn, selectedSemester, selectedKelas]);
 
-    const headers = ["Mata Pelajaran", "Nilai Akhir", "Capaian Kompetensi"];
+    const headersUAS = ["Mata Pelajaran", "Nilai Akhir", "Capaian Kompetensi"];
+    const headersSpiritual = ["Aspek", "Sholat Fardhu", "Solat Dhuha", "Sholat Tahajud", "Sunnah Tawatib", "Tilawah Quran", "Shaum Sunnah", "Shodaqoh", "Nilai Konklusi"];
+    const headersSosial = ["Aspek", "Sabar", "Jujur", "Amanah", "Tawakkal", "Empati", "Disiplin", "Kerjasama", "Nilai Konklusi"];
 
-    const processedData = data.length > 0 ? data.reduce((acc, item) => {
+    const processedDataUAS = Array.isArray(nilaiData) ? nilaiData.reduce((acc, item) => {
         const existingEntry = acc.find(entry => entry["Mata Pelajaran"] === item.nama_matapelajaran);
 
         if (existingEntry) {
@@ -88,6 +107,36 @@ export default function RaportSiswa() {
         }
 
         return acc;
+    }, []) : [];
+
+    const processedDataSpiritual = Array.isArray(absensiData) ? absensiData.map(item => {
+        return {
+            "Aspek": "Predikat",
+            "Sholat Fardhu": item.sholat_fardhu,
+            "Solat Dhuha": item.sholat_dhuha,
+            "Sholat Tahajud": item.sholat_tahajud,
+            "Sunnah Tawatib": item.sunnah_rawatib,
+            "Tilawah Quran": item.tilawah_quran,
+            "Shaum Sunnah": item.shaum_sunnah,
+            "Shodaqoh": item.shodaqoh,
+            "Nilai Konklusi": item.nilai_spiritual,
+            "Deskripsi": item.deskripsi_spiritual
+        };
+    }, []) : [];
+
+    const processedDataSosial = Array.isArray(absensiData) ? absensiData.map(item => {
+        return {
+            "Aspek": "Predikat",
+            "Sabar": item.sabar,
+            "Jujur": item.jujur,
+            "Amanah": item.amanah,
+            "Tawakkal": item.tawakkal,
+            "Empati": item.empati,
+            "Disiplin": item.disiplin,
+            "Kerjasama": item.kerjasama,
+            "Nilai Konklusi": item.nilai_sosial,
+            "Deskripsi": item.deskripsi_sosial
+        };
     }, []) : [];
 
     return (
@@ -110,28 +159,75 @@ export default function RaportSiswa() {
                 <div>{error}</div>
             ) : (
                 <>
-                    <DataTableRapor data={data} />
-                    <DataTableDemo data={processedData} header={headers} />
-                    {data.length > 0 && (
-                        <div className='flex gap-5 mt-4'>
-                            <table className='border'>
-                                <tbody>
-                                    <tr>
-                                        <th className='p-2 border'>Hadir</th>
-                                        <td className='p-2 border text-center'>{formatValue(data[0].hadir)}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className='p-2 border'>Sakit</th>
-                                        <td className='p-2 border text-center'>{formatValue(data[0].sakit)}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className='p-2 border'>Tanpa Keterangan</th>
-                                        <td className='p-2 border text-center'>{formatValue(data[0].absen)}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <DataTableRapor data={nilaiData} />
+                    <DataTableDemo data={processedDataUAS} header={headersUAS} />
+                    <div className='flex gap-5 mt-4'>
+                        {Array.isArray(absensiData) && absensiData.length === 0 ? (
+                            <div>No Data</div>
+                        ) : (
+                            Array.isArray(absensiData) && absensiData.map((item, index) => (
+                                <table key={index} className='border'>
+                                    <tbody>
+                                        <tr>
+                                            <th className='p-2 border'>Hadir</th>
+                                            <td className='p-2 border text-center'>{formatValue(item.hadir)}</td>
+                                        </tr>
+                                        <tr>
+                                            <th className='p-2 border'>Sakit</th>
+                                            <td className='p-2 border text-center'>{formatValue(item.sakit)}</td>
+                                        </tr>
+                                        <tr>
+                                            <th className='p-2 border'>Tanpa Keterangan</th>
+                                            <td className='p-2 border text-center'>{formatValue(item.absen)}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            ))
+                        )}
+                        <div>
+                            <DataTableDemo data={processedDataSpiritual} header={headersSpiritual} />
+                            {processedDataSpiritual.map((item, index) => (
+                                <div key={index} className='mb-5 border'>
+                                    <strong>Deskripsi :</strong> {item.Deskripsi}
+                                </div>
+                            ))}
+                            <DataTableDemo data={processedDataSosial} header={headersSosial} />
+                            {processedDataSosial.map((item, index) => (
+                                <div key={index} className='mb-5 border'>
+                                    <strong>Deskripsi :</strong> {item.Deskripsi}
+                                </div>
+                            ))}
                         </div>
-                    )}
+                    </div>
+                    <div>
+                        {HafalanData.length < 1 ? (
+                            <div>No Data</div>
+                        ) : (
+                            <>
+                                <table className='w-full border-collapse mt-2'>
+                                    <thead>
+                                        <tr>
+                                            <th className='p-2 border text-center'>Batas Hafalan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td className='p-2 border text-center'>{HafalanData.hafalan}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div className='mt-4 p-4 border w-full'>
+                                    <textarea
+                                        className='w-full'
+                                        value={HafalanData.catatan_guru}
+                                        readOnly
+                                        rows={3}
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                    </div>
                 </>
             )}
         </div>
