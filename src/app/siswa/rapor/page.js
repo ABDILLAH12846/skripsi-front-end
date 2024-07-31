@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { DataTableRapor } from '@/component/raport';
 import { MenuSelect } from '@/component/select';
 import { GlobalContext } from '@/app/layout';
 import { DataTableDemo } from '@/component/table';
@@ -159,7 +158,6 @@ export default function RaportSiswa() {
                 <div>{error}</div>
             ) : (
                 <>
-                    <DataTableRapor data={nilaiData} />
                     <DataTableDemo data={processedDataUAS} header={headersUAS} />
                     <div className='flex gap-5 mt-4'>
                         {Array.isArray(absensiData) && absensiData.length === 0 ? (
