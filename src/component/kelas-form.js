@@ -22,17 +22,18 @@ import { DataTableDemo } from './table'
 import SiswaSelect from './siswa-select'
 import GuruSelect from './guru-select'
 import { Select } from 'antd'
+import SelectTahunAjaran from './select-tahun-ajaran'
 
 const formSchema = z.object({
     nomorKelas: z.string().min(1, { message: "Tingkat Kelas harus di isi" }),
     namaKelas: z.string().min(1, { message: "Nama Kelas harus diisi" }),
-    waliKelas: z.string().min(1, { message: "Wali Kelas harus diisi" }),
-    tahunAjaran: z.string().min(1, { message: "Tahun Ajaran harus diisi" }),
+    waliKelas: z.number().min(1, { message: "Wali Kelas harus diisi" }),
+    // tahunAjaran: z.string().min(1, { message: "Tahun Ajaran harus diisi" }),
 })
 
 export default function KelasForm({ data, dataSiswa }) {
     const { toast } = useToast()
-    console.log("data kelas", data)
+    // console.log("data kelas", data)
     const nanoid = customAlphabet('0123456789', 4);
 
     const notification = (status, title, description) => {
@@ -73,7 +74,7 @@ export default function KelasForm({ data, dataSiswa }) {
                 idKelas: data.id_kelas,
                 nomorKelas: data?.no_kelas.toString(),
                 namaKelas: data?.nama_kelas,
-                waliKelas: data?.wali_kelas,
+                waliKelas: data?.nip,
                 tahunAjaran: data?.tahun_ajaran,
                 daftarSiswa: data?.daftar_siswa,
             }
@@ -120,14 +121,23 @@ export default function KelasForm({ data, dataSiswa }) {
         }
     )
 
+    // console.log(form.watch())
+
     const addKelas = async (data) => {
         try {
+            console.log({dataNI: data})
             const result = await fetch("http://localhost:8000/kelas", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ ...body(data), id_kelas: nanoid() })
+                body: JSON.stringify({
+                    id_kelas: form.watch("idKelas"),
+                    no_kelas: form.watch("nomorKelas"),
+                    nama_kelas: form.watch("namaKelas"),
+                    nip: form.watch("waliKelas"),
+                    tahun_ajaran: form.watch("tahunAjaran")
+                })
             })
             if (result.ok) {
                 notification(result.ok, "sukses", result.statusText)
@@ -142,14 +152,16 @@ export default function KelasForm({ data, dataSiswa }) {
         }
     }
     const editKelas = async (dataKelas) => {
+        console.log("hallo")
         try {
             const result = await fetch(`http://localhost:8000/kelas/${data.id_kelas}`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(body(dataKelas))
+                body: JSON.stringify({...body(dataKelas), tahun_ajaran: form.watch("tahunAjaran")})
             })
+            console.log({result})
             if (result.ok) {
                 notification(result.ok, "sukses", result.statusText)
                 setDisable(false)
@@ -157,6 +169,7 @@ export default function KelasForm({ data, dataSiswa }) {
                 notification(result.ok, "gagal", result.statusText)
             }
         } catch (e) {
+            console.log({e})
         } finally {
 
             // router.back()
@@ -199,6 +212,10 @@ export default function KelasForm({ data, dataSiswa }) {
         },
     ]
 
+    React.useEffect(() => {
+        form.reset(defaultValues)
+    },[])
+
     if (!dataSiswa) {
         return <p>Loading</p>
     }
@@ -218,10 +235,14 @@ export default function KelasForm({ data, dataSiswa }) {
                                             {
                                                 value === "waliKelas"
                                                     ?
-                                                    <GuruSelect onChange={(val) => field.onChange(val.value.toString())} defaultValue={data?.wali_kelas} />
+                                                    <GuruSelect onChange={(val) => field.onChange(val)} value={field} />
                                                     : value === "nomorKelas"
                                                         ?
                                                         <Select style={{ width: "100%" }} options={kelasOptions} placeholder="Pilih Kelas" size="large" onChange={(val) => field.onChange(val)} defaultValue={field.value ? field.value : null} />
+                                                        :
+                                                        value === "tahunAjaran"
+                                                        ?
+                                                        <SelectTahunAjaran onChange={(val) => field.onChange(val)} value={field.value}/>
                                                         :
                                                         <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
                                             }
@@ -240,7 +261,7 @@ export default function KelasForm({ data, dataSiswa }) {
                 chaval.length > 0
                     ?
                     // <p>{JSON.stringify(chaval)}</p>
-                    <div style={{marginTop: 20,}}>
+                    <div style={{ marginTop: 20, }}>
                         <DataTableDemo data={chaval} header={Object.keys(chaval[0])} />
                         <ButtonSessionForm onClick={addDaftarSiswa} />
                     </div>

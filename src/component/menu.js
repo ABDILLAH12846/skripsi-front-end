@@ -53,6 +53,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: 20,
+    overflowY: "scroll"
   }),
   list: css({
     width: 200,

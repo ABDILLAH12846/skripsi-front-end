@@ -11,7 +11,7 @@ export default function KelasSelect({ onChange, defaultValue }) {
         async function fetchData() {
             const res = await fetch('http://localhost:8000/kelas');
             const data = await res.json();
-            setData((data.map((val) => ({ value: val.id_kelas, label: `${val.no_kelas} ${val.nama_kelas}` }))));
+            setData((data.map((val) => ({ value: `${val.id_kelas} ${val.id_tahunajaran}`, label: `${val.no_kelas} ${val.nama_kelas}` }))));
         }
         fetchData();
     }, []);

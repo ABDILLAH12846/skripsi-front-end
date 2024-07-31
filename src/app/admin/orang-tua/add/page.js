@@ -1,6 +1,5 @@
 "use client"
 
-import KelasForm from '@/component/kelas-form'
 import OrangTuaForm from '@/component/orangtua-form';
 import React from 'react'
 

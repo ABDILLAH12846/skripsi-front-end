@@ -55,8 +55,8 @@ export default function DataGuru() {
             null
           }
       </div>
-      <div onClick={() => router.push("/admin/mata-pelajaran/add-roster")}>Kelola Roster</div>
-      <>
+      <Button onClick={() => router.push("/admin/mata-pelajaran/add-roster")}>Kelola Guru Mata Pelajaran</Button>
+      <div style={{marginTop: 20}}>
       {
         dataRoster
         ?
@@ -64,7 +64,7 @@ export default function DataGuru() {
         :
         null
       }
-      </>
+      </div>
     </div>
   )
 }
