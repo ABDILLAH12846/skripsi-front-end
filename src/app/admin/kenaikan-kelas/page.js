@@ -9,9 +9,11 @@ export default function KenaikanKelas() {
   const [data, setData] = React.useState(null);
   const [kelas, setKelas] = React.useState(null)
 
+  console.log({kelasyo: kelas})
+
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`http://localhost:8000/kelasanyar/${kelas.value}`);
+      const res = await fetch(`http://localhost:8000/kelasanyar/${kelas.value.split(" ")[0]}?id_tahunajaran=${kelas.value.split(" ")[1]}`);
       const data = await res.json();
       setData(data);
     }

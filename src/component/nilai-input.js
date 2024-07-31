@@ -40,7 +40,7 @@ export default function NilaiInput({ data }) {
                     tipe: data.tipe,
                     nilai: value.nilai,
                     semester: data.semester,
-                    tahun_ajaran: data.tahun_ajaran,
+                    id_tahunajaran: data.tahun_ajaran,
                     no_kelas: data.no_kelas,
 
                 })

@@ -168,16 +168,16 @@ export default function KenaikanKelasTable({ data }) {
             <div className={styles.header()}>
                 <div className={styles.nisn()}>nisn</div>
                 <div className={styles.nama()}>nama</div>
-                <div className={styles.nisn()}>nilai</div>
                 <div className={styles.nisn()}>status</div>
+                <div className={styles.nisn()}></div>
             </div>
-            <div style={{ width: "100%" }}>
+            <div style={{ width: "100%", marginBottom: 20, }}>
                 {
                     data.daftar_siswa.map((val) => (
-                        <div className={styles.listBody()} style={{backgroundColor: val.nilai_total > 75 ? "#4ade80" : "#fee2e2"}}>
+                        <div className={styles.listBody()} style={{backgroundColor: val.status.toLowerCase() === "lulus" ? "#4ade80" : "#fee2e2"}}>
                             <div className={styles.nisn()}>{val.nisn}</div>
                             <div className={styles.nama()}>{val.nama}</div>
-                            <div className={styles.nisn()}>{val.nilai_total}</div>
+                            <div className={styles.nisn()}>{val.status}</div>
                             <div className={styles.nisn()}>
                                 <Checkbox defaultChecked={chaval.find((el) => el.nisn === val.nisn)} onChange={(e) => onChange(e.target.checked, val)}/>
                             </div>

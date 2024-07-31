@@ -4,7 +4,7 @@ import React from 'react'
 import { MenuSelect } from './select';
 import { Select } from 'antd';
 
-export default function GuruSelect({ onChange, defaultValue }) {
+export default function GuruSelect({ onChange, value }) {
     const [data, setData] = React.useState(null);
 
     React.useEffect(() => {
@@ -20,7 +20,7 @@ export default function GuruSelect({ onChange, defaultValue }) {
             {
                 data
                     ?
-                    <Select placeholder="Pilih Guru" defaultValue={defaultValue ? defaultValue : null} style={{width: "100%"}} labelInValue options={data} onChange={onChange} size="large"/>
+                    <Select placeholder="Pilih Guru" value={value} style={{width: "100%"}} options={data} onChange={onChange} size="large"/>
                     :
                     null
             }

@@ -34,7 +34,7 @@ export default function page() {
         dataNilai
         ?
         dataNilai[0].nilai_seluruh.map((val) => (
-          <NilaiInput data={{...val, tahun_ajaran : dataNilai[0].tahun_ajaran, semester, nisn, idMapel, no_kelas : dataNilai[0].no_kelas}} />
+          <NilaiInput data={{...val, tahun_ajaran : dataNilai[0].id_tahunajaran, semester, nisn, idMapel, no_kelas : dataNilai[0].no_kelas}} />
         ))
         :
         null
