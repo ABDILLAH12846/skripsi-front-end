@@ -34,7 +34,7 @@ export default function page() {
     const handleDelete = async () => {
       try{
   
-        await fetch(`http://localhost:8000/orangtua/${data.idOrtu}`, {
+        await fetch(`http://localhost:8000/orangtua/${idOrtu}?status=${statusOrtu}`, {
           method: 'DELETE'
         })  
       } finally {

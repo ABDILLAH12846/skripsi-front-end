@@ -29,7 +29,7 @@ export default function page() {
     const handleDelete = async () => {
         try{
     
-          await fetch(`http://localhost:8000/matapelajaran/${data.idMapel}`, {
+          await fetch(`http://localhost:8000/matapelajaran/${idMapel}`, {
             method: 'DELETE'
           })  
         } finally {
