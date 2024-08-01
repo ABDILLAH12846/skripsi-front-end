@@ -66,7 +66,6 @@ export default function DataSiswaForm({ data, action }) {
                 status: data?.status,
                 TerdaftarSebagai: data?.terdaftar_sebagai,
                 TanggalMasuk: data?.tanggal_masuk ? new Date(data?.tanggal_masuk).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-                valid: data?.valid,
                 password: data?.password,
                 url: data.url,
             }
@@ -86,7 +85,6 @@ export default function DataSiswaForm({ data, action }) {
             status,
             TerdaftarSebagai: daftar,
             TanggalMasuk: new Date().toISOString().split('T')[0],
-            valid: valid,
             password: "",
             url: "",
 
@@ -114,7 +112,6 @@ export default function DataSiswaForm({ data, action }) {
             status,
             terdaftar_sebagai: daftar,
             tanggal_masuk: new Date(data?.TanggalMasuk).toISOString().split('T')[0],
-            valid: valid,
             url,
         }
     )
@@ -223,10 +220,7 @@ export default function DataSiswaForm({ data, action }) {
                                                             ?
                                                             <Select placeholder="Terdaftar Sebagai" style={{ width: "100%" }} size="large" options={daftarOptions} onChange={(val) => setDaftar(val)} defaultValue={daftar} />
                                                             :
-                                                            value === "valid"
-                                                                ?
-                                                                <Select placeholder="valid" style={{ width: "100%" }} size="large" options={validOptions} onChange={(val) => setValid(val)} defaultValue={valid} />
-                                                                :
+                                                            
                                                                  value === "url"
                                                                  ?
                                                                  <Upload url={url} setUrl={setUrl}/>
@@ -301,10 +295,7 @@ const styles = {
         width: "calc(25% - 10px)",
     }),
     TanggalMasuk: css({
-        width: "calc(25% - 10px)",
-    }),
-    valid: css({
-        width: "calc(25% - 10px)",
+        width: "calc(50% - 10px)",
     }),
     password: css({
         width: "calc(50% - 10px)",

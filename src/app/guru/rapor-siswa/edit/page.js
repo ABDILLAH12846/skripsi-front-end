@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { DataTableDemo } from '@/component/table';
 import ButtonSessionForm from '@/component/button-session-form';
+import { DataTableRapor } from '@/component/raport';
 
 const formatValue = (value) => {
     return value === null || value === 0 ? "-" : value;
@@ -148,6 +149,7 @@ export default function Page() {
                 <div>{error}</div>
             ) : (
                 <>
+                    <DataTableRapor data={nilaiData}/>
                     <DataTableDemo data={processedDataUAS} header={headersUAS} />
                     <div className='flex gap-5 mt-4'>
                         {Array.isArray(absensiData) && absensiData.length === 0 ? (

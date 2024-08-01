@@ -68,7 +68,6 @@ export default function DataGuruForm({ data, action }) {
                 NIK: data?.NIK,
                 TanggalMulaiTugas: data?.tanggal_mulai_tugas ? new Date(data?.tanggal_mulai_tugas).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                 status: data?.status,
-                valid: data?.valid,
                 NoKartuKeluarga: data?.No_KK,
                 password: data?.password,
                 url: data?.url,
@@ -91,7 +90,6 @@ export default function DataGuruForm({ data, action }) {
             NIK: "",
             TanggalMulaiTugas: new Date().toISOString().split('T')[0],
             status: status,
-            valid: valid,
             NoKartuKeluarga: "",
             password: "",
             url: ""
@@ -120,7 +118,6 @@ export default function DataGuruForm({ data, action }) {
             NIK: data.NIK,
             tanggal_mulai_tugas: new Date(data.TanggalMulaiTugas).toISOString().split('T')[0],
             status: status,
-            valid: valid,
             password: data?.password,
             No_KK: data?.NoKartuKeluarga,
             url: url,
@@ -191,17 +188,6 @@ export default function DataGuruForm({ data, action }) {
         },
     ]
 
-    const validOptions = [
-        {
-            label: "Valid",
-            value: "valid",
-        },
-        {
-            label: "Tidak Valid",
-            value: "tidak valid"
-        },
-
-    ]
     const kepegawaianOptions = [
         {
             label: "Guru Tetap Yayasan",
@@ -249,12 +235,8 @@ export default function DataGuruForm({ data, action }) {
                                                                 <Select placeholder="Status" style={{ width: "100%" }} size='large' options={statusOptions} onChange={(val) => setStatus(val)} defaultValue={status} />
                                                             </div>
                                                             :
-                                                            value === "valid"
-                                                                ?
-                                                                <div>
-                                                                    <Select placeholder="Valid" style={{ width: "100%" }} size='large' options={validOptions} onChange={(val) => setValid(val)} defaultValue={valid} />
-                                                                </div>
-                                                                :
+                                                            
+                                                                
                                                                 value === "statusKepegawaian"
                                                                     ?
                                                                     <div>
@@ -329,13 +311,13 @@ const styles = {
         width: "calc(45% - 10px)",
     }),
     NIK: css({
-        width: "calc(25% - 10px)",
+        width: "calc(33% - 10px)",
     }),
     status: css({
-        width: "calc(25% - 10px)",
+        width: "calc(33% - 10px)",
     }),
     TanggalMulaiTugas: css({
-        width: "calc(25% - 10px)",
+        width: "calc(33% - 10px)",
     }),
     valid: css({
         width: "calc(25% - 10px)",
