@@ -1,6 +1,7 @@
 "use client"
 
 import ButtonSessionForm from '@/component/button-session-form'
+import DeleteButton from '@/component/delete-button-dialog';
 import { Input } from '@/components/ui/input'
 import { data } from 'autoprefixer';
 import { customAlphabet } from 'nanoid';
@@ -25,6 +26,16 @@ export default function page() {
 
         fetchData();
     }, [idMapel]);
+    const handleDelete = async () => {
+        try{
+    
+          await fetch(`http://localhost:8000/matapelajaran/${data.idMapel}`, {
+            method: 'DELETE'
+          })  
+        } finally {
+          router.back()
+        }
+      }
     console.log({dataNI: data})
     const edit = async () => {
         try {
@@ -49,6 +60,7 @@ export default function page() {
                 data
                     ?
                     <>
+                        <div className='flex justify-end'><DeleteButton  handleDelete={handleDelete}/></div>
                         <Input onChange={(val) => setValue(val.target.value)} value={value}/>
                         <ButtonSessionForm onClick={edit} />
                     </>
