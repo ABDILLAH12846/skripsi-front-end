@@ -7,13 +7,14 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { customAlphabet } from 'nanoid';
 import { useToast } from "@/components/ui/use-toast"
+import KurikulumSelect from '@/component/kurikulum-select'
 
 export default function page() {
-    const { toast } = useToast() 
+    const { toast } = useToast()
     const router = useRouter();
     const nanoid = customAlphabet('0123456789', 4);
-    const [tahunAwal, setTahunAwal] = React.useState(2023)
-    const [tahunAkhir, setTahunAkhir] = React.useState(tahunAwal + 1)
+    const [tingkatan, setTingkatan] = React.useState(10)
+    const [kurikulum, setKurikulum] = React.useState(null)
 
     const notification = (status, title, description) => {
         toast({
@@ -23,19 +24,14 @@ export default function page() {
         })
     }
 
-    const onChange = (val) => {
-        setTahunAwal(val)
-        setTahunAkhir(val + 1)
-    }
-
     const onSubmit = async () => {
         try {
-            const result = await fetch("http://localhost:8000/tahun-ajaran", {
+            const result = await fetch("http://localhost:8000/tingkatan", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({id_tahunajaran: nanoid(), tahun_awal: tahunAwal})
+                body: JSON.stringify({ id_tingkatan: nanoid(), nomor: tingkatan, id_kurikulum: kurikulum })
             })
             if (result.ok) {
                 notification(result.ok, "sukses", result.statusText)
@@ -51,17 +47,17 @@ export default function page() {
     return (
         <div>
             <div className={styles.input()}>
-                <div className={styles.inputBox()} style={{display: "flex", flexDirection: "column"}}>
-                    <span>Tahun Awal</span>
-                    <InputNumber style={{width: "100%"}} size='large' title='Tahun Awal' min={2023} max={2050} value={tahunAwal} onChange={onChange} />
+                <div className={styles.inputBox()} style={{ display: "flex", flexDirection: "column" }}>
+                    <span>Tingkatan</span>
+                    <InputNumber style={{ width: "100%" }} size='large' title='Tingkatan' min={1} max={12} value={tingkatan} onChange={(val) => setTingkatan(val)} />
                 </div>
-                <div className={styles.inputBox()} style={{display: "flex", flexDirection: "column"}}>
-                    <span>Tahun Akhir</span>
-                    <InputNumber style={{width: "100%"}} size='large' min={2023} max={2050} value={tahunAkhir} onChange={(val) => setTahunAwal(val)} disabled />
+                <div className={styles.inputBox()} style={{ display: "flex", flexDirection: "column" }}>
+                    <span>Tingkatan</span>
+                    <KurikulumSelect value={kurikulum} onChange={(val) => setKurikulum(val.value)}/>
                 </div>
             </div>
             <div className={styles.buttonBox()}>
-                <ButtonSessionForm onClick={onSubmit}/>
+                <ButtonSessionForm onClick={onSubmit} />
             </div>
         </div>
     )
