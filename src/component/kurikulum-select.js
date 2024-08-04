@@ -4,13 +4,14 @@ import React from 'react'
 import { MenuSelect } from './select';
 import { Select } from 'antd';
 
-export default function GuruSelect({ onChange, value }) {
+export default function KurikulumSelect({ onChange, value }) {
     const [data, setData] = React.useState(null);
+
     React.useEffect(() => {
         async function fetchData() {
-            const res = await fetch('http://localhost:8000/guru');
+            const res = await fetch('http://localhost:8000/kurikulum');
             const data = await res.json();
-            setData((data.map((val) => ({ value: val.nip, label: val.nama }))));
+            setData((data.map((val) => ({ value: val.id_kurikulum, label: val.nama_kurikulum }))));
         }
         fetchData();
     }, []);
@@ -19,7 +20,7 @@ export default function GuruSelect({ onChange, value }) {
             {
                 data
                     ?
-                    <Select placeholder="Pilih Guru" value={value} style={{width: "100%"}} options={data} onChange={onChange} size="large"/>
+                    <Select placeholder="Pilih Kurikulum" value={value} style={{width: "100%"}} labelInValue options={data} onChange={onChange} size="large"/>
                     :
                     null
             }

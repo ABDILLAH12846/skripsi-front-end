@@ -52,6 +52,14 @@ export default function AdminLayout({ children }) {
         title: "Tahun Ajaran",
         link: "/admin/tahun-ajaran"
       },
+      {
+        title: "Tingkatan",
+        link: "/admin/tingkatan"
+      },
+      {
+        title: "Kurikulum",
+        link: "/admin/kurikulum"
+      },
     ]
   }, [])
   return (

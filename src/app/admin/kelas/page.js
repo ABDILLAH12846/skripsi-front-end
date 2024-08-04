@@ -10,7 +10,7 @@ export default function DataGuru() {
   const router = useRouter();
   const path = usePathname();
   const header = React.useMemo(() => {
-    return ["no_kelas","nama_kelas", "walikelas",]
+    return ["tingkatan","nama_kelas", "walikelas",]
   }, [])
   const [data, setData] = React.useState(null);
 

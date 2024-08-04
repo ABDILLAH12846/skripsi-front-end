@@ -37,6 +37,10 @@ export default function DataGuru() {
   console.log({data})
 
   const onClick = (obj) => {
+    const keyVal = Object.keys(obj).find((item) => item === "id_roster")
+    router.push(`/admin/mata-pelajaran/edit-roster?idRoster=${obj[keyVal]}`)
+  }
+  const onClickMapel = (obj) => {
     const keyVal = Object.keys(obj).find((item) => item === "id_matapelajaran")
     router.push(`/admin/mata-pelajaran/edit?idMapel=${obj[keyVal]}`)
   }
@@ -50,7 +54,7 @@ export default function DataGuru() {
         {
           data
             ?
-            <DataTableDemo data={data.map((val, idx) => ({no: idx+1, mata_pelajaran: val.nama, id_matapelajaran: val.id_matapelajaran}))} routing={onClick} header={header} />
+            <DataTableDemo data={data.map((val, idx) => ({no: idx+1, mata_pelajaran: val.nama, id_matapelajaran: val.id_matapelajaran}))} routing={onClickMapel} header={header} />
             :
             null
           }

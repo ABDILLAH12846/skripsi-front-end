@@ -6,8 +6,6 @@ import React from 'react'
 export default function SelectTahunAjaran({onChange, value}) {
     const [ta, setTa] = React.useState(null);
 
-    console.log(value)
-
     const taOptions = ta ? ta.map((val) => ({label: `${val.tahun_awal}/${val.tahun_akhir}`, value: val.id_tahunajaran})) : []
 
     React.useEffect(() => {
@@ -18,7 +16,6 @@ export default function SelectTahunAjaran({onChange, value}) {
         }
         fetchData();
     }, []);
-    console.log({ ta })
   return (
     <div>
         {

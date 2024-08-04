@@ -20,7 +20,7 @@ export default function MapelSelect({ onChange, value }) {
             {
                 data
                     ?
-                    <Select placeholder="Pilih Mata Pelajaran" value={data.find((val) => val.id_matapelajaran === value)} style={{width: "100%"}} labelInValue options={data} onChange={onChange} size="large"/>
+                    <Select placeholder="Pilih Mata Pelajaran" value={value} style={{width: "100%"}} labelInValue options={data} onChange={onChange} size="large"/>
                     :
                     null
             }
