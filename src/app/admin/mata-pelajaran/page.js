@@ -1,6 +1,7 @@
 "use client"
 
 import { DataTableDemo } from '@/component/table'
+import TingkatanSelect from '@/component/tingkatan-select'
 import { Button } from '@/components/ui/button'
 import { css } from '@/utils/stitches.config'
 import { useRouter, usePathname } from 'next/navigation'
@@ -10,18 +11,19 @@ export default function DataGuru() {
   const router = useRouter();
   const path = usePathname();
   const header = React.useMemo(() => {
-    return ["no", "mata_pelajaran",]
+    return ["no", "mata_pelajaran", "tingkatan", "kurikulum"]
   }, [])
   const headerRoster = React.useMemo(() => {
     return ["no", "mata_pelajaran", "kelas" , "guru",]
   }, [])
   const [data, setData] = React.useState(null);
   const [dataRoster, setDataRoster] = React.useState(null);
+  const [tingkatan, setTingkatan] = React.useState(null);
   
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch('http://localhost:8000/matapelajaran');
+      const res = await fetch(`http://localhost:8000/matapelajaran${tingkatan ? `?id_tingkatan=${tingkatan}` : ""}`);
       const data = await res.json();
       setData(data);
     }
@@ -33,7 +35,7 @@ export default function DataGuru() {
 
     fetchData();
     fetchDataRoster()
-  }, []);
+  }, [tingkatan]);
   console.log({data})
 
   const onClick = (obj) => {
@@ -50,11 +52,15 @@ export default function DataGuru() {
         <div className={styles.title()}>Daftar Mata Pelajaran SMA IT AL IZZAH</div>
         <Button assChild className={styles.btn()} onClick={() => router.push(`${path}/add`)}>Tambah</Button>
       </div>
-      <div>
+      <div style={{marginBottom: 20, marginTop: 20}}>
+        <div className={styles.filter()}>
+          <TingkatanSelect value={tingkatan} onChange={(val) => setTingkatan(val.value)} />
+          <Button className={styles.btn()} onClick={() => setTingkatan(null)}>Reset</Button>
+        </div>
         {
           data
             ?
-            <DataTableDemo data={data.map((val, idx) => ({no: idx+1, mata_pelajaran: val.nama, id_matapelajaran: val.id_matapelajaran}))} routing={onClickMapel} header={header} />
+            <DataTableDemo data={data.map((val, idx) => ({no: idx+1, mata_pelajaran: val.nama, id_matapelajaran: val.id_matapelajaran, tingkatan: val.nomor_tingkatan, kurikulum: val.nama_kurikulum}))} routing={onClickMapel} header={header} />
             :
             null
           }
@@ -90,5 +96,10 @@ const styles = {
   }),
   btn: css({
     backgroundColor: "ActiveText"
+  }),
+  filter: css({
+    display: "flex",
+    gap: 20,
+    marginBottom: 20,
   })
 }
