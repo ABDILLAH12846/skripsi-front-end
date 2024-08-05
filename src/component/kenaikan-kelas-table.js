@@ -11,6 +11,18 @@ export default function KenaikanKelasTable({ data }) {
         act ? setChaval([...chaval, val]) : setChaval(chaval.filter((el) => el.nisn !== val.nisn))
     }
 
+    const [tingkatan, setTingkatan] = React.useState(null)
+
+    React.useEffect(() => {
+        async function fetchData() {
+          const res = await fetch(`http://localhost:8000/tingkatan`);
+          const data = await res.json();
+          setTingkatan(data);
+        }
+
+        fetchData();
+      }, []);
+
     const datas = data.daftar_siswa.map((val) => {
         const finde = chaval.find((cal) => val.nisn === cal.nisn)
         if (finde) {
@@ -43,13 +55,20 @@ export default function KenaikanKelasTable({ data }) {
         return `${tahunPertama}/${tahunKedua}`;
     }
 
+    function ubahTingkatan(no_kelas) {
+        if (Number(no_kelas) === 12) {
+            const newTingkatan = tingkatan.find((val) => val.nomor === 10)
+            return newTingkatan
+        } else {
+            const newTingkatan = tingkatan.find((val) => val.nomor === (Number(no_kelas) + 1))
+            return newTingkatan
+        }
+
+    }
+
     const body = () => (
         {
-            nisn: data?.nisn,
-            nama_kelas: data?.namaKelas,
-            nip: data?.waliKelas,
-            no_kelas: Number(data?.no_kelas) >= 12 ? "10" : (Number(data?.no_kelas) + 1).toString(),
-            tahun_ajaran: ubahTahunAjaran(data?.tahun_ajaran),
+            tingkatan: ubahTingkatan(data?.no_kelas),
         }
     )
 
@@ -102,7 +121,7 @@ export default function KenaikanKelasTable({ data }) {
     const editKelas = async () => {
         try {
             console.log("hallo")
-            const result = await fetch(`http://localhost:8000/kelas/${data.id_kelas}/no_tahun`, {
+            const result = await fetch(`http://localhost:8000/kelas/${data.id_kelas}/tingkatan`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',

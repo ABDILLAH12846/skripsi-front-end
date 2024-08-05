@@ -9,13 +9,13 @@ import { InputNumber, Select } from 'antd';
 import { surah } from '@/const/const';
 import { css } from '@/utils/stitches.config';
 
-export default function HafalanInput({ data }) {
+export default function HafalanInput({ data, submit }) {
     console.log({ data })
     const dataSurah = data?.hafalan.split(" ayat ")
     console.log({ dataSurah })
     const nanoid = customAlphabet('0123456789', 4);
     const [suroh, setSuroh] = React.useState(dataSurah[0] ? dataSurah[0] : surah[0].surah)
-    const [ayat, setAyat] = React.useState(dataSurah[1] ? dataSurah[1] : 1 )
+    const [ayat, setAyat] = React.useState(dataSurah[1] ? dataSurah[1] : 1)
     console.log(suroh.length, surah[2].surah.length)
 
     const add = async () => {
@@ -55,9 +55,19 @@ export default function HafalanInput({ data }) {
                 })
             })
         } catch (e) {
-            console.log({e})
+            console.log({ e })
         }
     }
+
+    React.useEffect(() => {
+        if (submit) {
+            if (data?.id_hafalan) {
+                edit()
+            } else {
+                add()
+            }
+        }
+    }, [submit])
 
     console.log({ suroh: `${suroh} ${ayat}` })
 
@@ -65,10 +75,16 @@ export default function HafalanInput({ data }) {
         <div>
             <Label>{data?.label}</Label>
             <div className={styles.container()}>
-                <Select style={{width: "100%"}} size='large' defaultValue={suroh} options={surah.map((val) => ({ label: val.surah, value: val.surah }))} onChange={(val) => setSuroh(val)} />
-                <InputNumber style={{width: 200}} size='large' min={1} max={suroh ? surah.find((val) => val.surah === suroh).ayat : 10} onChange={(val) => setAyat(val)} defaultValue={ayat}/>
+                <div className={styles.surah()}>
+                    <span>Surah</span>
+                    <Select style={{ width: "100%" }} size='large' defaultValue={suroh} options={surah.map((val) => ({ label: val.surah, value: val.surah }))} onChange={(val) => setSuroh(val)} />
+                </div>
+                <div className={styles.ayat()}>
+                    <span>Ayat</span>
+                    <InputNumber style={{ width: 200 }} size='large' min={1} max={suroh ? surah.find((val) => val.surah === suroh).ayat : 10} onChange={(val) => setAyat(val)} defaultValue={ayat} />
+                </div>
             </div>
-            <ButtonSessionForm onClick={() => data?.id_hafalan ? edit() : add()} />
+            {/* <ButtonSessionForm onClick={() => data?.id_hafalan ? edit() : add()} /> */}
         </div>
     )
 }
@@ -80,5 +96,17 @@ const styles = {
         display: "flex",
         gap: 10,
         marginBottom: 10,
+    }),
+    surah: css({
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+    }),
+    ayat: css({
+        width: 200,
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
     })
 }

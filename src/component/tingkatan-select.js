@@ -20,7 +20,7 @@ export default function TingkatanSelect({ onChange, value }) {
             {
                 data
                     ?
-                    <Select placeholder="Pilih Nomor Kelas" value={value} style={{width: "100%"}} labelInValue options={data} onChange={onChange} size="large"/>
+                    <Select placeholder="Pilih Tingkatan" value={value} style={{width: "100%"}} labelInValue options={data} onChange={onChange} size="large"/>
                     :
                     null
             }

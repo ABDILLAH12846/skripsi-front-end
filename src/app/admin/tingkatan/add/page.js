@@ -52,7 +52,7 @@ export default function page() {
                     <InputNumber style={{ width: "100%" }} size='large' title='Tingkatan' min={1} max={12} value={tingkatan} onChange={(val) => setTingkatan(val)} />
                 </div>
                 <div className={styles.inputBox()} style={{ display: "flex", flexDirection: "column" }}>
-                    <span>Tingkatan</span>
+                    <span>kurikulum</span>
                     <KurikulumSelect value={kurikulum} onChange={(val) => setKurikulum(val.value)}/>
                 </div>
             </div>

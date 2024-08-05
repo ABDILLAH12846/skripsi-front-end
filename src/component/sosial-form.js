@@ -121,32 +121,35 @@ export default function SosialForm({ data, no_kelas, semester, nisn }) {
                 <form onSubmit={() => { }} >
                     <div className={styles.wrapper()}>
 
-                    
-                    {Object.keys(defaultValues).filter((val) => val !== "id_sosial" && val !== "no_kelas" && val !== "semester").map((val) => (
-                        <FormField
-                            control={form.control}
-                            name={val}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{val.replace(/_/g, ' ')}</FormLabel>
-                                    <FormControl>
-                                        {
-                                            val === "deskripsi"
-                                                ?
-                                                <div style={{width: "100%"}}>
 
-                                                <Textarea  {...field} value={field.value} onChange={(val) => field.onChange(val)} />
-                                                </div>
-                                                :
-                                                <div className={styles.container()}>
-                                                    <SikapSelect value={field.value} onChange={(val) => field.onChange(val)} />
-                                                </div>
-                                        }
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
-                    ))}
+                        {Object.keys(defaultValues).filter((val) => val !== "id_sosial" && val !== "no_kelas" && val !== "semester").map((val) => (
+                            <FormField
+                                control={form.control}
+                                name={val}
+                                render={({ field }) => (
+                                    <div className={val === "deskripsi" ? styles.deskripsi() : styles.select()} style={{ marginBottom: 20 }}>
+                                        <FormItem>
+                                            <FormLabel>{val.replace(/_/g, ' ')}</FormLabel>
+                                            <FormControl>
+                                                {
+                                                    val === "deskripsi"
+                                                        ?
+                                                        <div style={{ width: "100%" }}>
+
+                                                            <Textarea  {...field} value={field.value} onChange={(val) => field.onChange(val)} />
+                                                        </div>
+                                                        :
+                                                        <div className={styles.container()}>
+                                                            <SikapSelect value={field.value} onChange={(val) => field.onChange(val)} />
+                                                        </div>
+                                                }
+                                            </FormControl>
+                                        </FormItem>
+                                    </div>
+
+                                )}
+                            />
+                        ))}
                     </div>
                 </form>
             </Form>
@@ -156,7 +159,7 @@ export default function SosialForm({ data, no_kelas, semester, nisn }) {
 }
 const styles = {
     container: css({
-        width: "220px",
+        width: "100%",
     }),
     wrapper: css({
         width: "100%",
@@ -164,5 +167,11 @@ const styles = {
         gap: 10,
         flexWrap: "wrap",
         justifyContent: "space-between",
+    }),
+    select: css({
+        width: "calc(25% - 10px)",
+    }),
+    deskripsi: css({
+        width: "100%"
     })
 }

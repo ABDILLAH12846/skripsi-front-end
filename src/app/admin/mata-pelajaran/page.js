@@ -14,12 +14,12 @@ export default function DataGuru() {
     return ["no", "mata_pelajaran", "tingkatan", "kurikulum"]
   }, [])
   const headerRoster = React.useMemo(() => {
-    return ["no", "mata_pelajaran", "kelas" , "guru",]
+    return ["no", "mata_pelajaran", "kelas", "guru",]
   }, [])
   const [data, setData] = React.useState(null);
   const [dataRoster, setDataRoster] = React.useState(null);
   const [tingkatan, setTingkatan] = React.useState(null);
-  
+
 
   React.useEffect(() => {
     async function fetchData() {
@@ -36,7 +36,7 @@ export default function DataGuru() {
     fetchData();
     fetchDataRoster()
   }, [tingkatan]);
-  console.log({data})
+  console.log({ data })
 
   const onClick = (obj) => {
     const keyVal = Object.keys(obj).find((item) => item === "id_roster")
@@ -52,28 +52,31 @@ export default function DataGuru() {
         <div className={styles.title()}>Daftar Mata Pelajaran SMA IT AL IZZAH</div>
         <Button assChild className={styles.btn()} onClick={() => router.push(`${path}/add`)}>Tambah</Button>
       </div>
-      <div style={{marginBottom: 20, marginTop: 20}}>
+      <div style={{ marginBottom: 20, marginTop: 20 }}>
         <div className={styles.filter()}>
-          <TingkatanSelect value={tingkatan} onChange={(val) => setTingkatan(val.value)} />
+          <div>
+            <span>Tingkatan</span>
+            <TingkatanSelect value={tingkatan} onChange={(val) => setTingkatan(val.value)} />
+          </div>
           <Button className={styles.btn()} onClick={() => setTingkatan(null)}>Reset</Button>
         </div>
         {
           data
             ?
-            <DataTableDemo data={data.map((val, idx) => ({no: idx+1, mata_pelajaran: val.nama, id_matapelajaran: val.id_matapelajaran, tingkatan: val.nomor_tingkatan, kurikulum: val.nama_kurikulum}))} routing={onClickMapel} header={header} />
+            <DataTableDemo data={data.map((val, idx) => ({ no: idx + 1, mata_pelajaran: val.nama, id_matapelajaran: val.id_matapelajaran, tingkatan: val.nomor_tingkatan, kurikulum: val.nama_kurikulum }))} routing={onClickMapel} header={header} />
             :
             null
-          }
+        }
       </div>
       <Button onClick={() => router.push("/admin/mata-pelajaran/add-roster")}>Kelola Guru Mata Pelajaran</Button>
-      <div style={{marginTop: 20}}>
-      {
-        dataRoster
-        ?
-        <DataTableDemo data={dataRoster.map((val, idx) => ({no: idx+1, ...val, kelas: `${val.no_kelas} ${val.nama_kelas}` }))} routing={onClick} header={headerRoster} />
-        :
-        null
-      }
+      <div style={{ marginTop: 20 }}>
+        {
+          dataRoster
+            ?
+            <DataTableDemo data={dataRoster.map((val, idx) => ({ no: idx + 1, ...val, kelas: `${val.no_kelas} ${val.nama_kelas}` }))} routing={onClick} header={headerRoster} />
+            :
+            null
+        }
       </div>
     </div>
   )
@@ -101,5 +104,6 @@ const styles = {
     display: "flex",
     gap: 20,
     marginBottom: 20,
+    alignItems: "flex-end",
   })
 }
