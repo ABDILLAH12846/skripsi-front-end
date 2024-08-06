@@ -21,13 +21,14 @@ export default function RaportSiswa() {
 
     const [nilaiData, setNilai] = useState([]);
     const [absensiData, setAbsensi] = useState([]);
-    const [HafalanData, setHafalan] = useState();
+    const [hafalanData, setHafalan] = useState();
     const [selectedSemester, setSelectedSemester] = useState("ganjil");
     const [semesterLabel] = useState("Semester Ganjil");
     const [selectedKelas, setSelectedKelas] = useState("10");
     const [kelasLabel] = useState("Kelas X");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [studentDetails, setStudentDetails] = useState({});
 
     const dataSemester = [
         { value: "ganjil", title: "Semester Ganjil" },
@@ -48,21 +49,37 @@ export default function RaportSiswa() {
         setSelectedKelas(selectedOption);
     };
 
+    // useEffect(() => {
+    //     const fetchStudentDetails = async () => {
+    //         try {
+    //             const response = await fetch(`http://localhost:8000/detail-rapor/${nisn}`);
+    //             if (!response.ok) {
+    //                 throw new Error(`Failed to fetch student details`);
+    //             }
+    //             const data = await response.json();
+    //             setStudentDetails(data);
+    //         } catch (error) {
+    //             setError(error.message);
+    //         }
+    //     };
+
+    //     fetchStudentDetails();
+    // }, [nisn]);
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
-                const [nilaiRes, absensiRes, hafalan] = await Promise.all([
+                const [nilaiRes, absensiRes, hafalanRes] = await Promise.all([
                     fetch(`http://localhost:8000/raport/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`),
                     fetch(`http://localhost:8000/rapor/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`),
                     fetch(`http://localhost:8000/rapor-hafalan/${nisn}?semester=${selectedSemester}&no_kelas=${selectedKelas}`)
                 ]);
-                if (!nilaiRes.ok || !absensiRes.ok || !hafalan.ok) {
+                if (!nilaiRes.ok || !absensiRes.ok || !hafalanRes.ok) {
                     throw new Error(`Failed to fetch data`);
                 }
-                const [nilaiData, absensiData, dataHafalan] = await Promise.all([nilaiRes.json(), absensiRes.json(), hafalan.json()]);
-                console.log(dataHafalan)
+                const [nilaiData, absensiData, dataHafalan] = await Promise.all([nilaiRes.json(), absensiRes.json(), hafalanRes.json()]);
                 if (nilaiData.message === 'No available nilai data') {
                     setError('No available nilai data');
                 } else {
@@ -92,7 +109,7 @@ export default function RaportSiswa() {
     const headersSpiritual = ["Aspek", "Sholat Fardhu", "Solat Dhuha", "Sholat Tahajud", "Sunnah Tawatib", "Tilawah Quran", "Shaum Sunnah", "Shodaqoh", "Nilai Konklusi"];
     const headersSosial = ["Aspek", "Sabar", "Jujur", "Amanah", "Tawakkal", "Empati", "Disiplin", "Kerjasama", "Nilai Konklusi"];
 
-    const processedDataUAS = Array.isArray(nilaiData) ? nilaiData.reduce((acc, item) => {
+    const processedDataUAS = Array.isArray(nilaiData.studentData) ? nilaiData.studentData.reduce((acc, item) => {
         const existingEntry = acc.find(entry => entry["Mata Pelajaran"] === item.nama_matapelajaran);
 
         if (existingEntry) {
@@ -152,14 +169,30 @@ export default function RaportSiswa() {
                     data={dataSemester}
                     onChange={handleSemesterChange}
                 />
+            </div>            
+            {nilaiData.classData ? (
+            <div className='flex justify-between'>
+                <div className="mb-4">
+                <p><strong>NISN: </strong> {nilaiData.classData.nisn || "-"}</p>
+                <p><strong>Name: </strong> {nilaiData.classData.nama}</p>
+                <p><strong>Sekolah: </strong> SMA SWASTA ISLAM TERPADU AL IZZAH</p>
+                <p><strong>Alamat: </strong> JL. K.H AHMAD DAHLAN, DESA ARAS</p>
+                </div>
+                <div className="mb-4">
+                <p><strong>Kelas: </strong> {nilaiData.classData.no_kelas} {nilaiData.classData.nama_kelas}</p>
+                <p><strong>Semester: </strong> {selectedSemester} </p>
+                <p><strong>Tahun Ajaran: </strong> {nilaiData.classData.tahun_awal}/{nilaiData.classData.tahun_akhir}</p>
+                </div>
             </div>
+            ) : null}
             {loading ? (
                 <div>Loading...</div>
             ) : error ? (
                 <div>{error}</div>
             ) : (
                 <>
-                    <DataTableRapor data={nilaiData}/>
+                    
+                    <DataTableRapor data={nilaiData.studentData} />
                     <DataTableDemo data={processedDataUAS} header={headersUAS} />
                     <div className='flex gap-5 mt-4'>
                         {Array.isArray(absensiData) && absensiData.length === 0 ? (
@@ -200,7 +233,7 @@ export default function RaportSiswa() {
                         </div>
                     </div>
                     <div>
-                        {HafalanData.length < 1 ? (
+                        {hafalanData.length < 1 ? (
                             <div>No Data</div>
                         ) : (
                             <>
@@ -212,21 +245,20 @@ export default function RaportSiswa() {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td className='p-2 border text-center'>{HafalanData.hafalan}</td>
+                                            <td className='p-2 border text-center'>{hafalanData.hafalan}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <div className='mt-4 p-4 border w-full'>
                                     <textarea
                                         className='w-full'
-                                        value={HafalanData.catatan_guru}
+                                        value={hafalanData.catatan_guru}
                                         readOnly
                                         rows={3}
                                     />
                                 </div>
                             </>
                         )}
-
                     </div>
                 </>
             )}

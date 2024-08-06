@@ -7,7 +7,7 @@ import { customAlphabet } from 'nanoid';
 import ButtonSessionForm from './button-session-form';
 import { Textarea } from '@/components/ui/textarea';
 
-export default function NilaiInput({ data }) {
+export default function NilaiInput({ data, submit }) {
     const nanoid = customAlphabet('0123456789', 4);
     const [value, setValue] = React.useState(data)
 
@@ -93,6 +93,16 @@ export default function NilaiInput({ data }) {
         await editCapaian()
     }
 
+    React.useEffect(() => {
+        if (submit) {
+            if (data?.id_nilai) {
+                editNilai()
+            } else {
+                add()
+            }
+        }
+    },[submit])
+
     return (
         <div>
             <div style={{marginBottom: 10,}}>
@@ -109,7 +119,7 @@ export default function NilaiInput({ data }) {
                     :
                     null
             }
-            <ButtonSessionForm onClick={() => data?.id_nilai ? editNilai() : add()} />
+            {/* <ButtonSessionForm onClick={() => data?.id_nilai ? editNilai() : add()} /> */}
         </div>
     )
 }

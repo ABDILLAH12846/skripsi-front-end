@@ -53,11 +53,11 @@ export default function page() {
             <div className={styles.input()}>
                 <div className={styles.inputBox()} style={{display: "flex", flexDirection: "column"}}>
                     <span>Tahun Awal</span>
-                    <InputNumber style={{width: "100%"}} size='large' title='Tahun Awal' min={2023} max={2050} value={tahunAwal} onChange={onChange} />
+                    <InputNumber style={{width: "100%"}} size='large' title='Tahun Awal' min={2023} value={tahunAwal} onChange={onChange} />
                 </div>
                 <div className={styles.inputBox()} style={{display: "flex", flexDirection: "column"}}>
                     <span>Tahun Akhir</span>
-                    <InputNumber style={{width: "100%"}} size='large' min={2023} max={2050} value={tahunAkhir} onChange={(val) => setTahunAwal(val)} disabled />
+                    <InputNumber style={{width: "100%"}} size='large' min={2023} value={tahunAkhir} onChange={(val) => setTahunAwal(val)} disabled />
                 </div>
             </div>
             <div className={styles.buttonBox()}>

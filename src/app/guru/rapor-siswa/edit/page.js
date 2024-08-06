@@ -143,6 +143,21 @@ export default function Page() {
 
     return (
         <div>
+            {nilaiData.classData ? (
+            <div className='flex justify-between'>
+                <div className="mb-4">
+                <p><strong>NISN: </strong> {nilaiData.classData.nisn || "-"}</p>
+                <p><strong>Name: </strong> {nilaiData.classData.nama}</p>
+                <p><strong>Sekolah: </strong> SMA SWASTA ISLAM TERPADU AL IZZAH</p>
+                <p><strong>Alamat: </strong> JL. K.H AHMAD DAHLAN, DESA ARAS</p>
+                </div>
+                <div className="mb-4">
+                <p><strong>Kelas: </strong> {nilaiData.classData.no_kelas} {nilaiData.classData.nama_kelas}</p>
+                <p><strong>Semester: </strong> {semester} </p>
+                <p><strong>Tahun Ajaran: </strong> {nilaiData.classData.tahun_awal}/{nilaiData.classData.tahun_akhir}</p>
+                </div>
+            </div>
+            ) : null}
             {loading ? (
                 <div>Loading...</div>
             ) : error ? (

@@ -153,12 +153,15 @@ export default function KelolaAbsensi({ params }) {
     }
   }
 
+  const today = new Date().toISOString().split('T')[0];
+
   return (
     <div>
       <Input
         type="date"
         value={date}
         onChange={(val) => setDate(val.target.value)}
+        max={today}
       />
       {initialList.length === 0 ? (
         <p>Data absensi untuk tanggal {date} belum tersedia.</p>

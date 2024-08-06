@@ -125,20 +125,22 @@ export default function SpiritualForm({ data, no_kelas, semester, nisn }) {
                                 control={form.control}
                                 name={val}
                                 render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{val.replace(/_/g, ' ')}</FormLabel>
-                                        <FormControl>
-                                            {
-                                                val === "deskripsi"
-                                                    ?
-                                                    <Textarea {...field} value={field.value} onChange={(val) => field.onChange(val)} />
-                                                    :
-                                                    <div style={{ width: 220 }}>
-                                                        <SikapSelect value={field.value} onChange={(val) => field.onChange(val)} />
-                                                    </div>
-                                            }
-                                        </FormControl>
-                                    </FormItem>
+                                    <div className={val === "deskripsi" ? styles.deskripsi() : styles.select()} style={{ marginBottom: 20 }}>
+                                        <FormItem>
+                                            <FormLabel>{val.replace(/_/g, ' ')}</FormLabel>
+                                            <FormControl>
+                                                {
+                                                    val === "deskripsi"
+                                                        ?
+                                                        <Textarea {...field} value={field.value} onChange={(val) => field.onChange(val)} />
+                                                        :
+                                                        <div style={{ width: "100%" }}>
+                                                            <SikapSelect value={field.value} onChange={(val) => field.onChange(val)} />
+                                                        </div>
+                                                }
+                                            </FormControl>
+                                        </FormItem>
+                                    </div>
                                 )}
                             />
                         ))}
@@ -155,5 +157,11 @@ const styles = {
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "space-between",
+    }),
+    select: css({
+        width: "calc(25% - 10px)",
+    }),
+    deskripsi: css({
+        width: "100%"
     })
 }
