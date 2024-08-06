@@ -47,8 +47,11 @@ export default function DataSiswaForm({ data, action }) {
     const router = useRouter()
     const [status, setStatus] = React.useState(data && data.status ? data.status : "aktif")
     const [daftar, setDaftar] = React.useState(data && data.terdaftar_sebagai ? data.terdaftar_sebagai : "siswa baru")
-    const [valid, setValid] = React.useState(data && data.valid ? data.valid : "valid")
     const [url, setUrl] = React.useState(data && data.url ? data.url : null)
+    const [ijazah, setIjazah] = React.useState(data && data.ijazah ? data.ijazah : null)
+    const [akta, setAkta] = React.useState(data && data.akta ? data.akta : null)
+    const [kk, setKK] = React.useState(data && data.kartu_keluarga ? data.kartu_keluarga : null)
+    const [agama, setAgama] = React.useState(data && data.agama ? data.agama : null)
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
@@ -67,7 +70,19 @@ export default function DataSiswaForm({ data, action }) {
                 TerdaftarSebagai: data?.terdaftar_sebagai,
                 TanggalMasuk: data?.tanggal_masuk ? new Date(data?.tanggal_masuk).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                 password: data?.password,
-                url: data.url,
+                agama: data?.agama,
+                kip: data?.kip,
+                "No Rek": data?.no_rek,
+                "Berat Badan": data?.berat_badan,
+                "Tinggi Badan": data?.tinggi_badan,
+                "Lingkar Kepala": data?.lingkar_kepala,
+                "Kebutuhan Khusus": data?.kebutuhan_khusus,
+                "Asal Sekolah": data?.asal_sekolah,
+                anak: data?.anak,
+                ijazah: data?.ijazah,
+                akta: data?.akta,
+                "Kartu Keluarga": data?.kartu_keluarga,
+                profil: data.url,
             }
         }
         return {
@@ -86,7 +101,19 @@ export default function DataSiswaForm({ data, action }) {
             TerdaftarSebagai: daftar,
             TanggalMasuk: new Date().toISOString().split('T')[0],
             password: "",
-            url: "",
+            agama: "",
+            kip: "",
+            "No Rek": "",
+            "Berat Badan": "",
+            "Tinggi Badan": "",
+            "Lingkar Kepala": "",
+            "Kebutuhan Khusus": "",
+            "Asal Sekolah": "",
+            anak: "",
+            ijazah: "",
+            akta: "",
+            "Kartu Keluarga": "",
+            profil: "",
 
         }
     }, [data])
@@ -94,6 +121,8 @@ export default function DataSiswaForm({ data, action }) {
         resolver: zodResolver(formSchema),
         defaultValues
     })
+
+    const dataSync = form.watch()
 
     const body = (data) => (
         {
@@ -113,6 +142,18 @@ export default function DataSiswaForm({ data, action }) {
             terdaftar_sebagai: daftar,
             tanggal_masuk: new Date(data?.TanggalMasuk).toISOString().split('T')[0],
             url,
+            agama,
+            kip: dataSync.kip,
+            no_rek: dataSync['No Rek'],
+            berat_badan: dataSync['Berat Badan'],
+            tinggi_badan: dataSync['Tinggi Badan'],
+            lingkar_kepala: dataSync['Lingkar Kepala'],
+            kebutuhan_khusus: dataSync['Kebutuhan Khusus'],
+            asal_sekolah: dataSync["Asal Sekolah"],
+            anak: dataSync.anak,
+            ijazah,
+            akta,
+            kartu_keluarga: kk,
         }
     )
 
@@ -179,16 +220,18 @@ export default function DataSiswaForm({ data, action }) {
         },
     ]
 
-    const validOptions = [
-        {
-            label: "Valid",
-            value: "valid",
-        },
-        {
-            label: "Tidak Valid",
-            value: "tidak valid"
-        },
+    const agamaOption = [
+        { label: "Islam", value: "islam" },
+        { label: "Kristen Protestan", value: "kristen_protestan" },
+        { label: "Katolik", value: "katolik" },
+        { label: "Hindu", value: "hindu" },
+        { label: "Buddha", value: "buddha" },
+        { label: "Khonghucu", value: "khonghucu" },
+        { label: "Konghucu", value: "konghucu" },
+        { label: "Kepercayaan terhadap Tuhan Yang Maha Esa", value: "kepercayaan" },
+        { label: "Agama Lainnya", value: "lainnya" }
     ]
+    
 
 
 
@@ -220,12 +263,27 @@ export default function DataSiswaForm({ data, action }) {
                                                             ?
                                                             <Select placeholder="Terdaftar Sebagai" style={{ width: "100%" }} size="large" options={daftarOptions} onChange={(val) => setDaftar(val)} defaultValue={daftar} />
                                                             :
-                                                            
-                                                                 value === "url"
-                                                                 ?
-                                                                 <Upload url={url} setUrl={setUrl}/>
-                                                                 :
-                                                                <Input type={value === "tanggalLahir" || value === "TanggalMasuk" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                                            value === "agama"
+                                                            ?
+                                                            <Select placeholder="Pilih Agama" style={{ width: "100%" }} size="large" options={agamaOption} onChange={(val) => setAgama(val)} defaultValue={agama} />
+                                                            :
+                                                            value === "profil"
+                                                                ?
+                                                                <Upload url={url} setUrl={setUrl} />
+                                                                :
+                                                                value === "ijazah"
+                                                                    ?
+                                                                    <Upload url={ijazah} setUrl={setIjazah} />
+                                                                    :
+                                                                    value === "akta"
+                                                                        ?
+                                                                        <Upload url={akta} setUrl={setAkta} />
+                                                                        :
+                                                                        value === "Kartu Keluarga"
+                                                                            ?
+                                                                            <Upload url={kk} setUrl={setKK} />
+                                                                            :
+                                                                            <Input type={value === "tanggalLahir" || value === "TanggalMasuk" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
                                             }
                                         </FormControl>
                                         <FormMessage />
