@@ -24,6 +24,7 @@ import Upload from './upload'
 const formSchema = z.object({
     nip: z.string().min(1, { message: "NIP harus diisi" }).regex(/^\d+$/, { message: "NIP harus berupa angka" }),
     nuptk: z.string().min(1, { message: "NUPTK harus diisi" }).regex(/^\d+$/, { message: "NUPTK harus berupa angka" }),
+    nrg: z.string().min(1, { message: "NRG harus diisi" }).regex(/^\d+$/, { message: "NRG harus berupa angka" }),
     nama: z.string().min(1, { message: "Nama harus diisi" }),
     email: z.string().email({ message: "Email tidak valid" }),
     jenisKelamin: z.string().min(1, { message: "Jenis Kelamin harus diisi" }),
@@ -39,6 +40,7 @@ const formSchema = z.object({
         .regex(/[a-z]/, { message: "Password harus mengandung huruf kecil" })
         .regex(/[0-9]/, { message: "Password harus mengandung angka" }),
     NIK: z.string().length(16, { message: "NIK harus 16 karakter" }).regex(/^\d+$/, { message: "NIK harus berupa angka" }),
+    TanggalMenjadiGuru: z.string().transform((str) => new Date(str)),
     TanggalMulaiTugas: z.string().transform((str) => new Date(str)),
     NoKartuKeluarga: z.string().regex(/^\d+$/, { message: "No Kartu Keluarga harus berupa angka" }),
 })
@@ -49,11 +51,13 @@ export default function DataGuruForm({ data, action }) {
     const [status, setStatus] = React.useState(data && data.status ? data.status : "aktif")
     const [kepegawaian, setKepegawaian] = React.useState(data && data.status_kepegawaian ? data.status_kepegawaian : "guru tetap yayasan")
     const [url, setUrl] = React.useState(data?.url ? data?.url : null)
+    const [sertifikasi, setSertifikasi] = React.useState(data?.sertifikasi ? data?.sertifikasi : null)
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
                 nip: data?.nip.toString(),
                 nuptk: data?.nuptk.toString(),
+                nrg: data?.nrg,
                 nama: data?.nama,
                 email: data?.email,
                 jenisKelamin: data?.jenis_kelamin,
@@ -66,16 +70,19 @@ export default function DataGuruForm({ data, action }) {
                 jurusan: data?.jurusan,
                 statusKepegawaian: data?.status_kepegawaian,
                 NIK: data?.NIK,
+                TanggalMenjadiGuru: data?.tanggal_menjadi_guru ? new Date(data?.tanggal_menjadi_guru).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                 TanggalMulaiTugas: data?.tanggal_mulai_tugas ? new Date(data?.tanggal_mulai_tugas).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                 status: data?.status,
                 NoKartuKeluarga: data?.No_KK,
                 password: data?.password,
                 url: data?.url,
+                sertifikasi: data?.sertifikasi,
             }
         }
         return {
             nip: "",
             nuptk: "",
+            nrg: "",
             nama: "",
             email: "",
             jenisKelamin: "",
@@ -88,6 +95,7 @@ export default function DataGuruForm({ data, action }) {
             jurusan: "",
             statusKepegawaian: kepegawaian,
             NIK: "",
+            TanggalMenjadiGuru: new Date().toISOString().split('T')[0],
             TanggalMulaiTugas: new Date().toISOString().split('T')[0],
             status: status,
             NoKartuKeluarga: "",
@@ -104,6 +112,7 @@ export default function DataGuruForm({ data, action }) {
         {
             nip: data?.nip,
             nuptk: data?.nuptk,
+            nrg: data?.nrg,
             nama: data?.nama,
             email: data?.email,
             jenis_kelamin: data?.jenisKelamin,
@@ -116,6 +125,7 @@ export default function DataGuruForm({ data, action }) {
             jurusan: data?.jurusan,
             status_kepegawaian: kepegawaian,
             NIK: data.NIK,
+            tanggal_menjadi_guru: new Date(data.TanggalMenjadiGuru).toISOString().split('T')[0],
             tanggal_mulai_tugas: new Date(data.TanggalMulaiTugas).toISOString().split('T')[0],
             status: status,
             password: data?.password,
@@ -243,11 +253,15 @@ export default function DataGuruForm({ data, action }) {
                                                                         <Select placeholder="Status Kepegawaian" style={{ width: "100%" }} size='large' options={kepegawaianOptions} onChange={(val) => setKepegawaian(val)} defaultValue={kepegawaian} />
                                                                     </div>
                                                                     :
-                                                                    value === "url"
+                                                                    value === "url" 
                                                                         ?
                                                                         <Upload url={url} setUrl={setUrl} />
                                                                         :
-                                                                        <Input type={value === "tanggalLahir" || value === "TanggalMulaiTugas" ? "date" : value === "email" ? "email" : "text"} placeholder={`masukkan ${value} anda di dini`} {...field} value={field.value} />
+                                                                        value === "sertifikasi" 
+                                                                            ?
+                                                                            <Upload url={sertifikasi} setUrl={setSertifikasi} />
+                                                                            :
+                                                                            <Input type={value === "tanggalLahir"|| value === "TanggalMenjadiGuru" || value === "TanggalMulaiTugas" ? "date" : value === "email" ? "email" : "text"} placeholder={`masukkan ${value} anda di dini`} {...field} value={field.value} />
                                             }
                                         </FormControl>
                                         <FormMessage />
@@ -272,10 +286,13 @@ const styles = {
         justifyContent: "space-between"
     }),
     nip: css({
-        width: "calc(50% - 10px)",
+        width: "calc(33% - 10px)",
     }),
     nuptk: css({
-        width: "calc(50% - 10px)",
+        width: "calc(33% - 10px)",
+    }),
+    nrg: css({
+        width: "calc(33% - 10px)",
     }),
     nama: css({
         width: "calc(50% - 10px)",
@@ -314,6 +331,9 @@ const styles = {
         width: "calc(33% - 10px)",
     }),
     status: css({
+        width: "calc(33% - 10px)",
+    }),
+    TanggalMenjadiGuru: css({
         width: "calc(33% - 10px)",
     }),
     TanggalMulaiTugas: css({
