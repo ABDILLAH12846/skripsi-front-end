@@ -24,7 +24,7 @@ import Upload from './upload'
 const formSchema = z.object({
     NIPD: z.string().min(1, { message: "NIPD harus diisi" }).regex(/^\d+$/, { message: "NIPD harus berupa angka" }),
     nisn: z.string().min(1, { message: "NISN harus diisi" }).regex(/^\d+$/, { message: "NISN harus berupa angka" }),
-    nama: z.string().min(8, { message: "NIP harus memiliki 8 karakter" }),
+    nama: z.string().min(2, { message: "Nama harus diisi" }),
     email: z.string().email({ message: "Email tidak valid" }),
     jenisKelamin: z.string().min(1, { message: "Jenis Kelamin harus diisi" }),
     tanggalLahir: z.string().transform((str) => new Date(str)),

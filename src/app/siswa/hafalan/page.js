@@ -2,7 +2,7 @@
 
 import { GlobalContext } from '@/app/layout';
 import { css } from '@/utils/stitches.config';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MenuSelect } from '@/component/select';
 import { DataTableHafalan } from '@/component/tabel-hafalan';
 
@@ -13,19 +13,12 @@ export default function HafalanSiswa() {
     return <div>Loading...</div>;
   }
 
-  const { nisn } = user.user;
+  const { nisn, no_kelas } = user.user; // Assuming no_kelas is the maximum class the user can select
 
   const [selectedKelas, setSelectedKelas] = useState("10");
-  const [kelasLabel, setKelasLabel] = useState("Kelas X");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const dataKelas = [
-    { value: "10", title: "Kelas X" },
-    { value: "11", title: "Kelas XI" },
-    { value: "12", title: "Kelas XII" },
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +32,7 @@ export default function HafalanSiswa() {
         setData(data);
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError(error);
       } finally {
         setLoading(false);
       }
@@ -46,6 +40,16 @@ export default function HafalanSiswa() {
 
     fetchData();
   }, [nisn, selectedKelas]);
+
+  const determineKelasOptions = (userKelas) => {
+    const options = [];
+    for (let i = 10; i <= userKelas; i++) {
+      options.push({ title: `Kelas ${i}`, value: i.toString() });
+    }
+    return options;
+  }
+
+  const kelasOptions = determineKelasOptions(no_kelas);
 
   const handleKelasChange = (selectedOption) => {
     setSelectedKelas(selectedOption);
@@ -60,7 +64,12 @@ export default function HafalanSiswa() {
         <div className={styles.title()}>Hafalan Siswa</div>
       </div>
       <div className={styles.filterBox}>
-        <MenuSelect data={dataKelas} label={kelasLabel} onChange={handleKelasChange} />
+        <MenuSelect 
+          data={kelasOptions} 
+          label={kelasOptions.find(kelas => kelas.value === selectedKelas)?.title || "Pilih Kelas"} 
+          onChange={handleKelasChange} 
+          value={selectedKelas} // Ensure the selected value is shown
+        />
       </div>
       <div className={styles.tableContainer()}>
         {

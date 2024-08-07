@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { GlobalContext } from '@/app/layout';
 import { css } from '@/utils/stitches.config';
 import { MenuSelect } from '@/component/select';
@@ -13,13 +13,11 @@ export default function NilaiSiswa() {
     return <div>Loading...</div>;
   }
 
-  const { nisn } = user.user;
+  const { nisn, no_kelas } = user.user; // Assuming no_kelas is the maximum class the user can select
 
   const [data, setData] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState("ganjil");
-  const [semesterLabel] = useState("Semester Ganjil");
   const [selectedKelas, setSelectedKelas] = useState("10");
-  const [kelasLabel] = useState("Kelas X");
   const [loading, setLoading] = useState(true);
 
   const dataSemester = [
@@ -27,15 +25,20 @@ export default function NilaiSiswa() {
     { value: "genap", title: "Semester Genap" },
   ];
 
-  const dataKelas = [
-    { value: "10", title: "Kelas X" },
-    { value: "11", title: "Kelas XI" },
-    { value: "12", title: "Kelas XII" },
-  ];
+  const determineKelasOptions = (userKelas) => {
+    const options = [];
+    for (let i = 10; i <= userKelas; i++) {
+      options.push({ title: `Kelas ${i}`, value: i.toString() });
+    }
+    return options;
+  }
+
+  const dataKelas = determineKelasOptions(no_kelas);
 
   const handleSemesterChange = (selectedOption) => {
     setSelectedSemester(selectedOption);
   };
+
   const handleKelasChange = (selectedOption) => {
     setSelectedKelas(selectedOption);
   };
@@ -67,18 +70,18 @@ export default function NilaiSiswa() {
       </div>
       <div className={styles.filterBox()}>
         <MenuSelect
-          label={kelasLabel}
+          label={dataKelas.find(kelas => kelas.value === selectedKelas)?.title || "Pilih Kelas"}
           data={dataKelas}
           onChange={handleKelasChange}
         />
         <MenuSelect
-          label={semesterLabel}
+          label={dataSemester.find(semester => semester.value === selectedSemester)?.title || "Pilih Semester"}
           data={dataSemester}
           onChange={handleSemesterChange}
         />
       </div>
       <div className='m-4'>
-        <div>{semesterLabel}</div>
+        <div>{dataSemester.find(semester => semester.value === selectedSemester)?.title}</div>
         {loading ? <div>Loading...</div> : <DataTableNilai className={styles.tableContainer()} data={data} />}
       </div>
     </div>

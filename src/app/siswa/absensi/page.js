@@ -6,7 +6,6 @@ import { MenuSelect } from '@/component/select';
 import { css } from '@/utils/stitches.config';
 import React, { useState, useEffect } from 'react';
 
-
 export default function Absensi({ params }) {
   const { user } = React.useContext(GlobalContext);
   if (!user) {
@@ -14,9 +13,9 @@ export default function Absensi({ params }) {
   }
 
   const currentDate = new Date();
-  const { nisn } = user.user;
+  const { nisn, no_kelas } = user.user; // Assuming no_kelas is the maximum class the user can select
   const [data, setData] = useState([]);
-  const [tahunAjaran, setTahunAjaran] = useState('');
+  const [year, setYear] = useState('');
   const [selectedKelas, setSelectedKelas] = useState("10");
 
   useEffect(() => {
@@ -24,12 +23,12 @@ export default function Absensi({ params }) {
       try {
         const res = await fetch(`http://localhost:8000/siswa/absensi/${nisn}?no_kelas=${selectedKelas}`);
         const fetchedData = await res.json();
-        
+
         if (Array.isArray(fetchedData) && fetchedData.length > 0) {
-          setTahunAjaran(fetchedData[0].tahun_ajaran.slice(0, 4));
+          setYear(fetchedData[0].year);
           setData(fetchedData);
         } else {
-          setTahunAjaran('');
+          setYear('');
           setData([]);
         }
       } catch (error) {
@@ -40,21 +39,22 @@ export default function Absensi({ params }) {
     fetchData();
   }, [nisn, selectedKelas]);
 
-  const dataKelas = [
-    { value: "10", title: "Kelas X" },
-    { value: "11", title: "Kelas XI" },
-    { value: "12", title: "Kelas XII" },
-  ];
+  const determineKelasOptions = (userKelas) => {
+    const options = [];
+    for (let i = 10; i <= userKelas; i++) {
+      options.push({ title: `Kelas ${i}`, value: i.toString() });
+    }
+    return options;
+  }
+
+  const kelasOptions = determineKelasOptions(no_kelas);
 
   const handleKelasChange = (selectedOption) => {
     setSelectedKelas(selectedOption);
   };
 
   // Update the label based on selectedKelas
-  const kelasLabel = dataKelas.find(kelas => kelas.value === selectedKelas)?.title || "Pilih Kelas";
-
-  // Check if there's no data or no valid tahunAjaran
-  const noData = data.length === 0 || !tahunAjaran;
+  const kelasLabel = kelasOptions.find(kelas => kelas.value === selectedKelas)?.title || "Pilih Kelas";
 
   return (
     <div>
@@ -63,7 +63,7 @@ export default function Absensi({ params }) {
       </div>
       <MenuSelect
         label={kelasLabel}
-        data={dataKelas}
+        data={kelasOptions}
         onChange={handleKelasChange}
         value={selectedKelas} // Ensure the selected value is shown
       />
