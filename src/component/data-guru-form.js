@@ -263,7 +263,7 @@ export default function DataGuruForm({ data, action }) {
                                                                             ?
                                                                             <Upload url={sertifikasi} setUrl={setSertifikasi} />
                                                                             :
-                                                                            <Input type={value === "tanggalLahir"|| value === "TanggalMenjadiGuru" || value === "TanggalMulaiTugas" ? "date" : value === "email" ? "email" : "text"} placeholder={`masukkan ${value} anda di dini`} {...field} value={field.value} />
+                                                                            <Input type={value === "tanggalLahir"|| value === "TanggalMenjadiGuru" || value === "TanggalMulaiTugas" ? "date" : value === "email" ? "email" : "text"} placeholder={`masukkan ${value} anda di disini`} {...field} value={field.value} />
                                             }
                                         </FormControl>
                                         <FormMessage />

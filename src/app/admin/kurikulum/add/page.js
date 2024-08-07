@@ -47,7 +47,7 @@ export default function page() {
             <div className={styles.input()}>
                 <div className={styles.inputBox()} style={{ display: "flex", flexDirection: "column" }}>
                     <span>Kurikulum</span>
-                    <Input style={{ width: "100%" }} size='large' value={kurikulum} onChange={(val) => setKurikulum(val.target.value)} />
+                    <Input style={{ width: "100%" }} placeholder='Kurikulum' size='large' value={kurikulum} onChange={(val) => setKurikulum(val.target.value)} />
                 </div>
             </div>
             <div className={styles.buttonBox()}>

@@ -51,29 +51,6 @@ export default function OrangTuaForm({ data, dataSiswa }) {
     const [final, setFinal] = React.useState(true);
 
     console.log({data})
-
-    // const daftarSiswa = [
-    //     {
-    //         nis: "111",
-    //         nama: "Abdi",
-    //         kelas: "XII"
-    //     },
-    //     {
-    //         nis: "112",
-    //         nama: "Zikri",
-    //         kelas: "XII"
-    //     },
-    //     {
-    //         nis: "113",
-    //         nama: "Husni",
-    //         kelas: "XII"
-    //     },
-    //     {
-    //         nis: "114",
-    //         nama: "Akbar",
-    //         kelas: "XII"
-    //     },
-    // ]
     const defaultValues = React.useMemo(() => {
         if (data) {
             return {
@@ -289,7 +266,7 @@ export default function OrangTuaForm({ data, dataSiswa }) {
                                                         setFinal(false)
                                                     }} />
                                                     :
-                                                    <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                                    <Input type={value === "tanggalLahir" ? "date" : value === "email" ? "email" : "text"} placeholder={`masukkan ${value} anda di disini`} {...field} value={field.value} />
                                             }
                                         </FormControl>
                                         <FormMessage />
