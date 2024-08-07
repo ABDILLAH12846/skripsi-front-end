@@ -283,7 +283,7 @@ export default function DataSiswaForm({ data, action }) {
                                                                             ?
                                                                             <Upload url={kk} setUrl={setKK} />
                                                                             :
-                                                                            <Input type={value === "tanggalLahir" || value === "TanggalMasuk" ? "date" : value === "email" ? "email" : "text"} placeholder="shadcn" {...field} value={field.value} />
+                                                                            <Input type={value === "tanggalLahir" || value === "TanggalMasuk" ? "date" : value === "email" ? "email" : "text"} placeholder={`masukkan ${value} anda di disini`} {...field} value={field.value} />
                                             }
                                         </FormControl>
                                         <FormMessage />
