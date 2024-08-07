@@ -100,7 +100,8 @@ export default function DataGuruForm({ data, action }) {
             status: status,
             NoKartuKeluarga: "",
             password: "",
-            url: ""
+            url: "",
+            sertifikasi: "",
         }
     }, [data])
     const form = useForm({
@@ -131,6 +132,7 @@ export default function DataGuruForm({ data, action }) {
             password: data?.password,
             No_KK: data?.NoKartuKeluarga,
             url: url,
+            sertifikasi: sertifikasi,
         }
     )
 

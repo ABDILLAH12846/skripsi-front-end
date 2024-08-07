@@ -17,29 +17,30 @@ export default function RaportSiswa() {
         return <div>Loading...</div>;
     }
 
-    const { nisn } = user.user;
+    const { nisn, no_kelas } = user.user; // Assuming no_kelas is the maximum class the user can select
 
     const [nilaiData, setNilai] = useState([]);
     const [absensiData, setAbsensi] = useState([]);
     const [hafalanData, setHafalan] = useState();
     const [selectedSemester, setSelectedSemester] = useState("ganjil");
-    const [semesterLabel] = useState("Semester Ganjil");
     const [selectedKelas, setSelectedKelas] = useState("10");
-    const [kelasLabel] = useState("Kelas X");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [studentDetails, setStudentDetails] = useState({});
 
     const dataSemester = [
         { value: "ganjil", title: "Semester Ganjil" },
         { value: "genap", title: "Semester Genap" },
     ];
 
-    const dataKelas = [
-        { value: "10", title: "Kelas X" },
-        { value: "11", title: "Kelas XI" },
-        { value: "12", title: "Kelas XII" },
-    ];
+    const determineKelasOptions = (userKelas) => {
+        const options = [];
+        for (let i = 10; i <= userKelas; i++) {
+            options.push({ title: `Kelas ${i}`, value: i.toString() });
+        }
+        return options;
+    }
+
+    const dataKelas = determineKelasOptions(no_kelas);
 
     const handleSemesterChange = (selectedOption) => {
         setSelectedSemester(selectedOption);
@@ -48,23 +49,6 @@ export default function RaportSiswa() {
     const handleKelasChange = (selectedOption) => {
         setSelectedKelas(selectedOption);
     };
-
-    // useEffect(() => {
-    //     const fetchStudentDetails = async () => {
-    //         try {
-    //             const response = await fetch(`http://localhost:8000/detail-rapor/${nisn}`);
-    //             if (!response.ok) {
-    //                 throw new Error(`Failed to fetch student details`);
-    //             }
-    //             const data = await response.json();
-    //             setStudentDetails(data);
-    //         } catch (error) {
-    //             setError(error.message);
-    //         }
-    //     };
-
-    //     fetchStudentDetails();
-    // }, [nisn]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -160,12 +144,12 @@ export default function RaportSiswa() {
         <div>
             <div className="flex gap-5 mb-4">
                 <MenuSelect
-                    label={kelasLabel}
+                    label={dataKelas.find(kelas => kelas.value === selectedKelas)?.title || "Pilih Kelas"}
                     data={dataKelas}
                     onChange={handleKelasChange}
                 />
                 <MenuSelect
-                    label={semesterLabel}
+                    label={dataSemester.find(semester => semester.value === selectedSemester)?.title || "Pilih Semester"}
                     data={dataSemester}
                     onChange={handleSemesterChange}
                 />

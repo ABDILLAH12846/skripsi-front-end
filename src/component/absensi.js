@@ -19,7 +19,9 @@ export function AbsensiTable({ data, currentDate }) {
         status = "sunday";
       } else {
         const absence = absences.find(a => a.tanggal === dateStr);
-        status = absence ? absence.status : "hadir";
+        if (absence) {
+          status = absence.status;
+        }
       }
       const isFutureDate = date > currentDate;
       days.push({ day, date: dateStr, status, isFutureDate });
@@ -27,7 +29,21 @@ export function AbsensiTable({ data, currentDate }) {
     return days;
   };
 
-  const year = data.length > 0 ? parseInt(data[0].tahun_ajaran.slice(0, 4), 10) : null;
+  const determineYear = (kelas) => {
+    const baseYear = currentDate.getFullYear();
+    switch (kelas) {
+      case 10:
+        return baseYear;
+      case 11:
+        return baseYear + 1;
+      case 12:
+        return baseYear + 2;
+      default:
+        return baseYear;
+    }
+  };
+
+  const year = data.length > 0 ? determineYear(parseInt(data[0].no_kelas, 10)) : null;
 
   const dataAbsensi = year ? [
     { nama: "Juli", days: generateDays(7, year, data) },
