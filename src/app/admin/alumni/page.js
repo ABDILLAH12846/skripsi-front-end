@@ -10,7 +10,7 @@ export default function DataGuru() {
   const router = useRouter();
   const path = usePathname();
   const header = React.useMemo(() => {
-    return ["nisn", "nama", "angkatan",]
+    return ["NISN", "Nama", "Angkatan",]
   }, [])
 
   const [data, setData] = React.useState(null);
@@ -30,7 +30,7 @@ export default function DataGuru() {
   }, []);
 
   const onClick = (obj) => {
-    const keyVal = Object.keys(obj).find((item) => item === "nisn")
+    const keyVal = Object.keys(obj).find((item) => item === "NISN")
     router.push(`/admin/data-siswa/${obj[keyVal]}`)
   }
 
@@ -43,7 +43,7 @@ export default function DataGuru() {
         {
           data
           ?
-          <DataTableDemo data={dataBaru} header={header} routing={onClick}/>
+          <DataTableDemo data={dataBaru.map((val, idx) => ({  NISN: val.nisn, Nama: val.nama, Angkatan: val.angkatan }))} header={header} routing={onClick}/>
           :
           null
         }

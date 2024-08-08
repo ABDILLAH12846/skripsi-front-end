@@ -20,7 +20,7 @@ export default function AbsensiSiswa() {
   const [data, setData] = React.useState(null);
 
   const header = React.useMemo(() => {
-    return ["nama", "nisn", "absensi"]
+    return ["Nama", "NISN", "Absensi"]
   }, [])
   
 
@@ -42,7 +42,7 @@ export default function AbsensiSiswa() {
       {
         data
         ?
-        <DataTableDemo data={data.map((val) => ({...val, absensi: `sakit : ${val.absensi.sakit} | hadir : ${val.absensi.hadir} | absen : ${val.absensi.absen}`}))}  header={header} />
+        <DataTableDemo data={data.map((val) => ({...val, Nama: val.nama, NISN: val.nisn, Absensi: `sakit : ${val.absensi.sakit} | hadir : ${val.absensi.hadir} | absen : ${val.absensi.absen}`}))}  header={header} />
         // <p>{JSON.stringify(data)}</p>
         :
         null

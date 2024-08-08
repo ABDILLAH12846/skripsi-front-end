@@ -358,6 +358,36 @@ const styles = {
     password: css({
         width: "calc(50% - 10px)",
     }),
+    agama: css({
+        width: "calc(33% - 10px)",
+    }),
+    kip: css({
+        width: "calc(33% - 10px)",
+    }),
+    nama_kip: css({
+        width: "calc(33% - 10px)",
+    }),
+    "No Rek": css({
+        width: "calc(33% - 10px)",
+    }),
+    "Berat Badan": css({
+        width: "calc(33% - 10px)",
+    }),
+    "Tinggi Badan": css({
+        width: "calc(33% - 10px)",
+    }),
+    "Lingkar Kepala": css({
+        width: "calc(33% - 10px)",
+    }),
+    "Kebutuhan Khusus": css({
+        width: "calc(33% - 10px)",
+    }),
+    "Asal Sekolah": css({
+        width: "calc(33% - 10px)",
+    }),
+    anak: css({
+        width: "calc(33% - 10px)",
+    }),
     buttonSession: css({
         width: "100%",
         display: "flex",

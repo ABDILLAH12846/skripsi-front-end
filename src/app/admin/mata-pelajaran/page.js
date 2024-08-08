@@ -11,10 +11,10 @@ export default function DataGuru() {
   const router = useRouter();
   const path = usePathname();
   const header = React.useMemo(() => {
-    return ["no", "mata_pelajaran", "tingkatan", "kurikulum"]
+    return ["No", "Mata Pelajaran", "Tingkatan", "Kurikulum"]
   }, [])
   const headerRoster = React.useMemo(() => {
-    return ["no", "mata_pelajaran", "kelas", "guru",]
+    return ["No", "Mata Pelajaran", "Kelas", "Guru",]
   }, [])
   const [data, setData] = React.useState(null);
   const [dataRoster, setDataRoster] = React.useState(null);
@@ -63,7 +63,7 @@ export default function DataGuru() {
         {
           data
             ?
-            <DataTableDemo data={data.map((val, idx) => ({ no: idx + 1, mata_pelajaran: val.nama, id_matapelajaran: val.id_matapelajaran, tingkatan: val.nomor_tingkatan, kurikulum: val.nama_kurikulum }))} routing={onClickMapel} header={header} />
+            <DataTableDemo data={data.map((val, idx) => ({ No: idx + 1, "Mata Pelajaran": val.nama, id_matapelajaran: val.id_matapelajaran, Tingkatan: val.nomor_tingkatan, Kurikulum: val.nama_kurikulum }))} routing={onClickMapel} header={header} />
             :
             null
         }
@@ -73,7 +73,7 @@ export default function DataGuru() {
         {
           dataRoster
             ?
-            <DataTableDemo data={dataRoster.map((val, idx) => ({ no: idx + 1, ...val, kelas: `${val.no_kelas} ${val.nama_kelas}` }))} routing={onClick} header={headerRoster} />
+            <DataTableDemo data={dataRoster.map((val, idx) => ({ No: idx + 1, ...val, Kelas: `${val.no_kelas} ${val.nama_kelas}`, Guru: val.guru, "Mata Pelajaran": val.mata_pelajaran }))} routing={onClick} header={headerRoster} />
             :
             null
         }

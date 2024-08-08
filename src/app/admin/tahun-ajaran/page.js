@@ -10,7 +10,7 @@ export default function page() {
     const router = useRouter();
     const path = usePathname();
     const header = React.useMemo(() => {
-        return ["no", "tahun_awal", "tahun_akhir",]
+        return ["No", "Tahun Awal", "Tahun Akhir",]
     }, [])
     const [data, setData] = React.useState(null);
 
@@ -32,7 +32,7 @@ export default function page() {
             {
                 data
                     ?
-                    <DataTableDemo data={data.map((val, idx) => ({ ...val, no: idx + 1 }))} header={header} />
+                    <DataTableDemo data={data.map((val, idx) => ({ No: idx + 1, "Tahun Awal": val.tahun_awal, "Tahun Akhir": val.tahun_akhir }))} header={header} />
                     :
                     <p>Loading</p>
             }

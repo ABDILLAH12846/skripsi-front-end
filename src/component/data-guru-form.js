@@ -333,7 +333,7 @@ const styles = {
         width: "calc(33% - 10px)",
     }),
     status: css({
-        width: "calc(33% - 10px)",
+        width: "calc(19% - 10px)",
     }),
     TanggalMenjadiGuru: css({
         width: "calc(33% - 10px)",
@@ -345,9 +345,9 @@ const styles = {
         width: "calc(25% - 10px)",
     }),
     password: css({
-        width: "calc(50% - 10px)",
+        width: "calc(39% - 10px)",
     }),
     NoKartuKeluarga: css({
-        width: "calc(50% - 10px)",
+        width: "calc(39% - 10px)",
     }),
 }
