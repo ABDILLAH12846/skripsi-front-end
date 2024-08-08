@@ -10,7 +10,7 @@ export default function page() {
     const router = useRouter();
     const path = usePathname();
     const header = React.useMemo(() => {
-        return ["no", "tingkatan", "kelas", "kurikulum"]
+        return ["No", "Tingkatan", "Kelas", "Kurikulum"]
     }, [])
     const [data, setData] = React.useState(null);
 
@@ -38,7 +38,7 @@ export default function page() {
             {
                 data
                     ?
-                    <DataTableDemo data={data.map((val, idx) => ({ ...val, no: idx + 1 , tingkatan: val.nomor}))} header={header} routing={onClick}/>
+                    <DataTableDemo data={data.map((val, idx) => ({  No: idx + 1 , Tingkatan: val.nomor, Kelas: val.kelas, Kurikulum: val.kurikulum}))} header={header} routing={onClick}/>
                     :
                     <p>Loading</p>
             }
