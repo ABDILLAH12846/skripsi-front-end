@@ -5,6 +5,10 @@ import { useSearchParams } from 'next/navigation';
 import { DataTableDemo } from '@/component/table';
 import ButtonSessionForm from '@/component/button-session-form';
 import { DataTableRapor } from '@/component/raport';
+import html2pdf from 'html2pdf.js';
+import { jsPDF } from 'jspdf';
+import { PDFDocument } from 'pdf-lib';
+
 
 const formatValue = (value) => {
     return value === null || value === 0 ? "-" : value;
@@ -141,8 +145,62 @@ export default function Page() {
         };
     }, []) : [];
 
+    const ref1 = React.useRef();
+    const ref2 = React.useRef();
+      
+    const handleExportPdf = async () => {
+        const opt = {
+          margin: [20, 20, 20, 20], // top, right, bottom, left margins
+          jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+        };
+      
+        // Helper function to get PDF as ArrayBuffer
+        const getPdfArrayBuffer = async (ref) => {
+          return new Promise((resolve, reject) => {
+            html2pdf().from(ref.current).set(opt).outputPdf('arraybuffer').then(resolve).catch(reject);
+          });
+        };
+      
+        try {
+          // Create a new PDF document
+          const pdfDoc = await PDFDocument.create();
+      
+          // Get PDF ArrayBuffers for each ref
+          const ref1ArrayBuffer = await getPdfArrayBuffer(ref1);
+          const ref2ArrayBuffer = await getPdfArrayBuffer(ref2);
+      
+          // Load PDF pages from ArrayBuffers
+          const ref1PdfDoc = await PDFDocument.load(ref1ArrayBuffer);
+          const ref2PdfDoc = await PDFDocument.load(ref2ArrayBuffer);
+      
+          // Copy pages from ref1 PDF
+          const [ref1Page] = await pdfDoc.copyPages(ref1PdfDoc, [0]);
+          pdfDoc.addPage(ref1Page);
+      
+          // Copy pages from ref2 PDF
+          const [ref2Page] = await pdfDoc.copyPages(ref2PdfDoc, [0]);
+          pdfDoc.addPage(ref2Page);
+      
+          // Serialize the PDF document to bytes
+          const pdfBytes = await pdfDoc.save();
+      
+          // Create a Blob and trigger the download
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'combined_document.pdf';
+          a.click();
+          URL.revokeObjectURL(url);
+      
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+        }
+      };
+
     return (
         <div>
+            <div onClick={handleExportPdf}>Export PDF</div>
             {nilaiData.classData ? (
             <div className='flex justify-between'>
                 <div className="mb-4">
@@ -165,8 +223,11 @@ export default function Page() {
             ) : (
                 <>
                     <DataTableRapor data={nilaiData}/>
+                    <div ref={ref2}>
+
                     <DataTableDemo data={processedDataUAS} header={headersUAS} />
-                    <div className='flex gap-5 mt-4'>
+                    </div>
+                    <div className='flex gap-5 mt-4' ref={ref1}>
                         {Array.isArray(absensiData) && absensiData.length === 0 ? (
                             <div>No Data</div>
                         ) : (
@@ -204,7 +265,7 @@ export default function Page() {
                             ))}
                         </div>
                     </div>
-                    <div>
+                    <div >
                         {hafalanData.length < 1 ? (
                             <div>No Data</div>
                         ) : (

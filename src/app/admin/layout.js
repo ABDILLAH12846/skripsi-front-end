@@ -60,6 +60,10 @@ export default function AdminLayout({ children }) {
         title: "Kurikulum",
         link: "/admin/kurikulum"
       },
+      {
+        title: "Semester",
+        link: "/admin/semester"
+      },
     ]
   }, [])
   return (
