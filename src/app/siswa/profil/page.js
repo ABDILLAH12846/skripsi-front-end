@@ -36,7 +36,7 @@ export default function Profile({ params }) {
       <div className={styles.header()}>
         <div className={styles.title()}>Profil</div>
       </div>
-      {data ? <SiswaProfile data={Object.fromEntries(Object.entries(data).filter(([key]) => key !== 'password'))}/> : null}
+      {data ? <SiswaProfile data={Object.fromEntries(Object.entries(data).filter(([key]) => key !== 'password' && key !== 'ijazah' && key !== 'akta' && key !== 'kartu_keluarga'))}/> : null}
     </div>
   );
 }

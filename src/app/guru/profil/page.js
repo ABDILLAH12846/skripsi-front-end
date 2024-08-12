@@ -39,7 +39,7 @@ export default function Profile({ params }) {
       <div className={styles.header()}>
         <div className={styles.title()}>Profil</div>
       </div>
-      {data ? <GuruProfile data={Object.fromEntries(Object.entries(data).filter(([key]) => key !== 'password' && key !== 'valid'))} /> : null}
+      {data ? <GuruProfile data={Object.fromEntries(Object.entries(data).filter(([key]) => key !== 'password' && key !== 'valid' && key !== 'sertifikasi'))} /> : null}
     </div>
   );
 }

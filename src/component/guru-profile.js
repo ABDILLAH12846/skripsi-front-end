@@ -2,14 +2,23 @@ import { DataTableDemo } from '@/component/table'
 import { Button } from '@/components/ui/button'
 import { css } from '@/utils/stitches.config'
 import Image from 'next/image'
-import { useRouter, usePathname } from 'next/navigation'
 import React from 'react'
+import dayjs from 'dayjs'
 import GalleryImage from "../../public/svg/gallery.svg"
 
 export default function GuruProfile({ data }) {
     const header = React.useMemo(() => {
         return ["nama", "no_kelas", "nama_kelas",]
     }, [])
+
+    const formatValue = (key, value) => {
+        // Check if the value is a date
+        if (key.includes("tanggal") || key.includes("date")) {
+            return dayjs(value).format('DD/MM/YYYY'); // Format as dd/mm/yyyy
+        }
+        return value || "-";
+    }
+
     return (
         <div className={styles.content()}>
             <div className={styles.leftProfile()}>
@@ -25,9 +34,9 @@ export default function GuruProfile({ data }) {
                 <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block"}}>Data Pribadi</h3>
                 <div className={styles.valueBox()}>
                     {Object.keys(data).filter((val) => val !== "matapelajaran" && val !== "url").map((key) => (
-                        <div className={styles.listValue()}>
+                        <div className={styles.listValue()} key={key}>
                             <span style={{ fontWeight: "bold", fontSize: "16px" }}>{key}</span>
-                            <span>{data[key] || "-"}</span>
+                            <span>{formatValue(key, data[key])}</span>
                         </div>
                     ))}
                 </div>
@@ -51,7 +60,6 @@ export default function GuruProfile({ data }) {
 const styles = {
     header: css({
         width: "100%",
-        // backgroundColor: "AliceBlue",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -92,14 +100,12 @@ const styles = {
         display: "flex",
         flexDirection: "column",
         gap: 10,
-        // flexWrap: "wrap",
         height: "70vh",
         width: "100%",
     }),
     valueBox: css({
         display: "flex",
         flexDirection: "column",
-        // backgroundColor: "AliceBlue",
         width: "100%",
         flexWrap: "wrap",
         height: "100%",

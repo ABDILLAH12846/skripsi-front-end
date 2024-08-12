@@ -30,7 +30,7 @@ export function AbsensiTable({ data, currentDate }) {
   };
 
   const determineYear = (kelas) => {
-    const baseYear = currentDate.getFullYear();
+    const baseYear = currentDate;
     switch (kelas) {
       case 10:
         return baseYear;
@@ -113,7 +113,7 @@ const styles = {
     backgroundColor: "$backgroundColor",
     variants: {
       status: {
-        hadir: { backgroundColor: "#489858" }, // Green for present
+        hadir: { backgroundColor: "green" }, // Green for present
         absen: { backgroundColor: "red" }, // Red for absent
         sakit: { backgroundColor: "yellow" }, // Yellow for sick
         sunday: { backgroundColor: "grey" }, // Grey for Sunday
