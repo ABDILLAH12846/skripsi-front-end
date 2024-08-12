@@ -39,7 +39,7 @@ export default function DataGuru() {
         {
           data
             ?
-            <DataTableDemo data={data.map((val, idx) => ({ Nama: val.nama, NIP: val.nip, "E-Mail": val.email, Jabatan: val.jabatan, "Mata Pelajaran": val.nama_kurikulum }))} routing={onClick} header={header} />
+            <DataTableDemo data={data.map((val, idx) => ({ Nama: val.nama, NIP: val.nip, "E-Mail": val.email, Jabatan: val.jabatan, "Mata Pelajaran": val.matapelajaran }))} routing={onClick} header={header} />
             :
             null
         }

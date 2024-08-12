@@ -5,6 +5,9 @@ import { MenuSelect } from '@/component/select';
 import { GlobalContext } from '@/app/layout';
 import { DataTableDemo } from '@/component/table';
 import { DataTableRapor } from '@/component/raport';
+import html2pdf from 'html2pdf.js';
+import { PDFDocument } from 'pdf-lib';
+import { Button } from 'antd';
 
 const formatValue = (value) => {
     return value === null || value === 0 ? "-" : value;
@@ -140,8 +143,62 @@ export default function RaportSiswa() {
         };
     }, []) : [];
 
+    const ref1 = React.useRef();
+    const ref2 = React.useRef();
+      
+    const handleExportPdf = async () => {
+        const opt = {
+          margin: [20, 20, 20, 20], // top, right, bottom, left margins
+          jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+        };
+      
+        // Helper function to get PDF as ArrayBuffer
+        const getPdfArrayBuffer = async (ref) => {
+          return new Promise((resolve, reject) => {
+            html2pdf().from(ref.current).set(opt).outputPdf('arraybuffer').then(resolve).catch(reject);
+          });
+        };
+      
+        try {
+          // Create a new PDF document
+          const pdfDoc = await PDFDocument.create();
+      
+          // Get PDF ArrayBuffers for each ref
+          const ref1ArrayBuffer = await getPdfArrayBuffer(ref1);
+          const ref2ArrayBuffer = await getPdfArrayBuffer(ref2);
+      
+          // Load PDF pages from ArrayBuffers
+          const ref1PdfDoc = await PDFDocument.load(ref1ArrayBuffer);
+          const ref2PdfDoc = await PDFDocument.load(ref2ArrayBuffer);
+      
+          // Copy pages from ref1 PDF
+          const [ref1Page] = await pdfDoc.copyPages(ref1PdfDoc, [0]);
+          pdfDoc.addPage(ref1Page);
+      
+          // Copy pages from ref2 PDF
+          const [ref2Page] = await pdfDoc.copyPages(ref2PdfDoc, [0]);
+          pdfDoc.addPage(ref2Page);
+      
+          // Serialize the PDF document to bytes
+          const pdfBytes = await pdfDoc.save();
+      
+          // Create a Blob and trigger the download
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'combined_document.pdf';
+          a.click();
+          URL.revokeObjectURL(url);
+      
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+        }
+      };
+
     return (
         <div>
+            
             <div className="flex gap-5 mb-4">
                 <MenuSelect
                     label={dataKelas.find(kelas => kelas.value === selectedKelas)?.title || "Pilih Kelas"}
@@ -153,7 +210,8 @@ export default function RaportSiswa() {
                     data={dataSemester}
                     onChange={handleSemesterChange}
                 />
-            </div>            
+            </div>
+            <Button onClick={handleExportPdf}>Export PDF</Button>            
             {nilaiData.classData ? (
             <div className='flex justify-between'>
                 <div className="mb-4">
@@ -163,7 +221,7 @@ export default function RaportSiswa() {
                 <p><strong>Alamat: </strong> JL. K.H AHMAD DAHLAN, DESA ARAS</p>
                 </div>
                 <div className="mb-4">
-                <p><strong>Kelas: </strong> {nilaiData.classData.no_kelas} {nilaiData.classData.nama_kelas}</p>
+                <p><strong>Kelas: </strong> {selectedKelas} {nilaiData.classData.nama_kelas}</p>
                 <p><strong>Semester: </strong> {selectedSemester} </p>
                 <p><strong>Tahun Ajaran: </strong> {nilaiData.classData.tahun_awal}/{nilaiData.classData.tahun_akhir}</p>
                 </div>

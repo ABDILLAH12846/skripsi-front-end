@@ -13,7 +13,7 @@ export default function Absensi({ params }) {
   }
 
   const currentDate = new Date();
-  const { nisn, no_kelas } = user.user; // Assuming no_kelas is the maximum class the user can select
+  const { nisn, no_kelas } = user.user;
   const [data, setData] = useState([]);
   const [year, setYear] = useState('');
   const [selectedKelas, setSelectedKelas] = useState("10");
@@ -53,7 +53,6 @@ export default function Absensi({ params }) {
     setSelectedKelas(selectedOption);
   };
 
-  // Update the label based on selectedKelas
   const kelasLabel = kelasOptions.find(kelas => kelas.value === selectedKelas)?.title || "Pilih Kelas";
 
   return (
@@ -61,13 +60,20 @@ export default function Absensi({ params }) {
       <div className={styles.header()}>
         <div className={styles.title()}>Absensi</div>
       </div>
-      <MenuSelect
-        label={kelasLabel}
-        data={kelasOptions}
-        onChange={handleKelasChange}
-        value={selectedKelas} // Ensure the selected value is shown
-      />
-      <AbsensiTable data={data} currentDate={currentDate} />
+      <div className='flex justify-between'>
+        <MenuSelect
+          label={kelasLabel}
+          data={kelasOptions}
+          onChange={handleKelasChange}
+          value={selectedKelas}
+        />
+        <div className={styles.paletteContainer()}>
+          <div className={styles.paletteBox({ status: 'hadir' })}>Hadir</div>
+          <div className={styles.paletteBox({ status: 'absen' })}>Absen</div>
+          <div className={styles.paletteBox({ status: 'sakit' })}>Sakit</div>
+        </div>
+      </div>
+      <AbsensiTable data={data} currentDate={year} />
     </div>
   );
 }
@@ -85,5 +91,28 @@ const styles = {
     borderBottom: "2px solid #FDD100",
     padding: "10px 0",
     fontWeight: "bold",
+  }),
+  paletteContainer: css({
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+  }),
+  paletteBox: css({
+    width: "50px",
+    height: "20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "12px",
+    fontWeight: "bold",
+    borderRadius: "5px",
+    color: "#fff",
+    variants: {
+      status: {
+        hadir: { backgroundColor: "#489858" }, // Green for hadir
+        absen: { backgroundColor: "red" }, // Red for absen
+        sakit: { backgroundColor: "yellow", color: "#000" }, // Yellow for sakit
+      },
+    },
   }),
 };

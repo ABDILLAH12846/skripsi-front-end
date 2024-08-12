@@ -1,15 +1,19 @@
-import { DataTableDemo } from '@/component/table'
-import { Button } from '@/components/ui/button'
-import { css } from '@/utils/stitches.config'
-import Image from 'next/image'
-import { useRouter, usePathname } from 'next/navigation'
-import React from 'react'
-import GalleryImage from "../../public/svg/gallery.svg"
+import { DataTableDemo } from '@/component/table';
+import { css } from '@/utils/stitches.config';
+import Image from 'next/image';
+import React from 'react';
+import dayjs from 'dayjs';
+import GalleryImage from "../../public/svg/gallery.svg";
 
 export default function SiswaProfile({ data }) {
     const header = React.useMemo(() => {
-        return ["nama", "status", "alamat", "no_telepon", "pekerjaan", "gaji",]
-    }, [])
+        return ["nama", "status", "alamat", "no_telepon", "pekerjaan", "gaji"];
+    }, []);
+
+    const formatDate = (dateString) => {
+        return dateString ? dayjs(dateString).format('DD/MM/YYYY') : '-';
+    };
+
     return (
         <div className={styles.content()}>
             <div className={styles.leftProfile()}>
@@ -27,25 +31,23 @@ export default function SiswaProfile({ data }) {
                     {Object.keys(data).filter((val) => val !== "orangtua" && val !== "url").map((key) => (
                         <div className={styles.listValue()}>
                             <span style={{ fontWeight: "bold", fontSize: "16px" }}>{key}</span>
-                            <span>{data[key] || "-"}</span>
+                            <span>
+                                {key === 'tanggal_lahir' || key === 'tanggal_masuk' ? formatDate(data[key]) : data[key] || '-'}
+                            </span>
                         </div>
                     ))}
                 </div>
-                {
-                    data.orangtua
-                        ?
-                        <>
-                            <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block" }}>Data Orang Tua</h3>
-                            <div style={{ marginBottom: 40 }}>
-                                <DataTableDemo data={data.orangtua} header={header} />
-                            </div>
-                        </>
-                        :
-                        null
-                }
+                {data.orangtua && (
+                    <>
+                        <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#124A4B", marginBottom: 10, display: "block" }}>Data Orang Tua</h3>
+                        <div style={{ marginBottom: 40 }}>
+                            <DataTableDemo data={data.orangtua} header={header} />
+                        </div>
+                    </>
+                )}
             </div>
         </div>
-    )
+    );
 }
 
 const styles = {
