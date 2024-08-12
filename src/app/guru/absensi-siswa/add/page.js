@@ -9,11 +9,16 @@ import { customAlphabet } from 'nanoid';
 import ButtonSessionForm from '@/component/button-session-form';
 import { GlobalContext } from '@/app/layout';
 import { css } from '@/utils/stitches.config';
+import { useSearchParams } from 'next/navigation'
 
 export default function KelolaAbsensi({ params }) {
+  const searchParams = useSearchParams();
+  const tahun = searchParams.get("tahun")
+  const semester = searchParams.get("semester")
   const { user } = React.useContext(GlobalContext)
   const nanoid = customAlphabet('0123456789', 4);
   const { toast } = useToast();
+  console.log({tahun, semester})
   const notification = (status, title, description) => {
     toast({
       variant: status ? "outline" : "destructive",
@@ -32,7 +37,7 @@ export default function KelolaAbsensi({ params }) {
   useEffect(() => {
     async function fetchData() {
 
-      const res = await fetch(`http://localhost:8000/absensi/${id}/${date}`);
+      const res = await fetch(`http://localhost:8000/absensi/${id}/${date}?semester=${semester}&id_tahunajaran=${tahun}`);
       if (!res.ok) {
         console.error(`Failed to fetch data for ${date}: ${res.statusText}`);
         return;
@@ -51,7 +56,8 @@ export default function KelolaAbsensi({ params }) {
           sakit: item.status === 'sakit' ? 1 : 0,
         },
         no_kelas: item.no_kelas,
-        nama: item.nama
+        nama: item.nama,
+        id_semester: item.id_semester,
       }));
 
       setInitialList(formattedData);
@@ -61,7 +67,8 @@ export default function KelolaAbsensi({ params }) {
         nisn: item.nisn,
         nama: item.nama,
         tanggal: date,
-        status: item.status
+        status: item.status,
+        id_semester: item.id_semester,
       }));
 
       setAttendanceArray(initialAttendanceArray);
@@ -70,9 +77,9 @@ export default function KelolaAbsensi({ params }) {
     fetchData();
   }, [date, id]);
 
-  const updateAttendanceArray = (id_absensi, nisn, value) => {
+  const updateAttendanceArray = (id_absensi, id_semester, value) => {
     setAttendanceArray(prevArray => {
-      const existingIndex = prevArray.findIndex(item => item.nisn === nisn);
+      const existingIndex = prevArray.findIndex(item => item.id_semester === id_semester);
       if (existingIndex >= 0) {
         const newArray = [...prevArray];
         newArray[existingIndex].status = value;
@@ -179,15 +186,15 @@ export default function KelolaAbsensi({ params }) {
             </div>
           </div>
           {initialList.map(val => (
-            <div key={val.nisn} className={styles.listItem()} style={{borderBottom: "1px solid $gray500"}}>
+            <div key={val.nisn} className={styles.listItem()} style={{ borderBottom: "1px solid $gray500" }}>
               <div className={styles.label()}>
                 <div className={styles.nisn()}>{val.nisn}</div>
                 <div>{val.nama}</div>
               </div>
               <RadioGroup
                 onValueChange={(val) => {
-                  const { id_absensi, nisn, value } = JSON.parse(val);
-                  updateAttendanceArray(id_absensi, nisn, value);
+                  const { id_absensi, id_semester, value } = JSON.parse(val);
+                  updateAttendanceArray(id_absensi, id_semester, value);
                 }}
               >
                 <div className={styles.radioButtonList()}>
@@ -196,10 +203,10 @@ export default function KelolaAbsensi({ params }) {
                   {Object.keys(val.absensi).map(item => (
                     <div key={item} className={styles.radioItem()}>
                       <RadioGroupItem
-                        value={JSON.stringify({ id_absensi: val.id_absensi, nisn: val.nisn, value: item })}
+                        value={JSON.stringify({ id_absensi: val.id_absensi, nisn: val.nisn, value: item, id_semester: val.id_semester })}
                         id={`${val.id_absensi || 'new'}-${val.nisn}-${item}`}  // Use 'new' if id_absensi is null
                         name={`attendance-${val.nisn}`}
-                        checked={attendanceArray.find(att => att.nisn === val.nisn)?.status === item}
+                        checked={attendanceArray.find(att => att.id_semester === val.id_semester)?.status === item}
                       />
                     </div>
                   ))}

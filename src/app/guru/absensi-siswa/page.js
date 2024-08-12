@@ -8,6 +8,7 @@ import { css } from '@/utils/stitches.config'
 import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import React from 'react'
+import { Select } from 'antd'
 
 export default function AbsensiSiswa() {
   const { user } = React.useContext(GlobalContext)
@@ -17,35 +18,69 @@ export default function AbsensiSiswa() {
   const router = useRouter();
   const path = usePathname();
   const { nip } = user.user;
-  const [data, setData] = React.useState(null);
+  const [data, setData] = React.useState([]);
+  const [semester, setSemester] = React.useState("ganjil");
+  const [tahunOptions, setTahunOptions] = React.useState(null);
+  const [tahun, setTahun] = React.useState(null);
 
   const header = React.useMemo(() => {
     return ["Nama", "NISN", "Absensi"]
   }, [])
-  
+
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`http://localhost:8000/absensi/${nip}`);
+      const res = await fetch(`http://localhost:8000/absensi/${nip}?semester=${semester}&id_tahunajaran=${tahun}`);
       const data = await res.json();
       setData(data);
     }
 
     fetchData();
-  }, [nip]);
+  }, [nip, semester, tahun]);
+
+  React.useEffect((val) => {
+    async function fetchData() {
+      const res = await fetch('http://localhost:8000/tahun-ajaran');
+      const data = await res.json();
+      setTahunOptions(data);
+      setTahun(data[0].id_tahunajaran)
+    }
+
+    fetchData();
+  }, [])
+
+  const semesterOptions = [
+    {
+      label: "Ganjil",
+      value: "ganjil"
+    },
+    {
+      label: "Genap",
+      value: "genap"
+    }
+  ]
+
   return (
     <div>
       <div className={styles.header()}>
         <div className={styles.title()}>Absensi Siswa</div>
-        <Button assChild className={styles.btn()} onClick={() => router.push(`${path}/add`)}>Kelola Absensi</Button>
+        <Button assChild className={styles.btn()} onClick={() => router.push(`${path}/add?semester=${semester}&tahun=${tahun}`)}>Kelola Absensi</Button>
       </div>
+      <Select options={semesterOptions} onChange={(val) => setSemester(val)} value={semester} />
+      {
+        tahunOptions
+          ?
+          <Select options={tahunOptions.map((val) => ({ label: `${val.tahun_awal}/${val.tahun_akhir}`, value: val.id_tahunajaran }))} value={tahun} onChange={(val) => setTahun(val)} />
+          :
+          null
+      }
       {
         data
-        ?
-        <DataTableDemo data={data.map((val) => ({...val, Nama: val.nama, NISN: val.nisn, Absensi: `sakit : ${val.absensi.sakit} | hadir : ${val.absensi.hadir} | absen : ${val.absensi.absen}`}))}  header={header} />
-        // <p>{JSON.stringify(data)}</p>
-        :
-        null
+          ?
+          <DataTableDemo data={data.map((val) => ({ ...val, Nama: val.nama, NISN: val.nisn, Absensi: `sakit : ${val.absensi.sakit} | hadir : ${val.absensi.hadir} | absen : ${val.absensi.absen}` }))} header={header} />
+          // <p>{JSON.stringify(data)}</p>
+          :
+          null
       }
     </div>
   )
