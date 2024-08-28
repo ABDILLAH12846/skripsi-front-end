@@ -16,7 +16,19 @@ export default function HafalanInput({ data, submit }) {
     const nanoid = customAlphabet('0123456789', 4);
     const [suroh, setSuroh] = React.useState(dataSurah[0] ? dataSurah[0] : surah[0].surah)
     const [ayat, setAyat] = React.useState(dataSurah[1] ? dataSurah[1] : 1)
+    const [status, setStatus] = React.useState(data?.status ? data?.status : "lanjut")
+    const [keterangan, setKeterangan] = React.useState(data?.keterangan ? data?.keterangan : "Lancar")
     console.log(suroh.length, surah[2].surah.length)
+    const statusOptions = [
+        {
+            label: "Lanjut",
+            value: "lanjut",
+        },
+        {
+            label: "Ulang",
+            value: "ulang",
+        }
+    ];
 
     const add = async () => {
         try {
@@ -32,6 +44,8 @@ export default function HafalanInput({ data, submit }) {
                     minggu: data.minggu,
                     hafalan: `${suroh} ayat ${ayat}`,
                     no_kelas: data.no_kelas,
+                    keterangan,
+                    status,
 
                 })
             })
@@ -51,6 +65,8 @@ export default function HafalanInput({ data, submit }) {
                     bulan: data.bulan,
                     minggu: data.minggu,
                     hafalan: `${suroh} ayat ${ayat}`,
+                    keterangan,
+                    status,
 
                 })
             })
@@ -82,6 +98,16 @@ export default function HafalanInput({ data, submit }) {
                 <div className={styles.ayat()}>
                     <span>Ayat</span>
                     <InputNumber style={{ width: 200 }} size='large' min={1} max={suroh ? surah.find((val) => val.surah === suroh).ayat : 10} onChange={(val) => setAyat(val)} defaultValue={ayat} />
+                </div>
+                <div className={styles.ayat()}>
+                    <span>Status</span>
+                    <Select style={{ width: "100%" }} size='large' value={status} options={statusOptions} onChange={(val) => setStatus(val)} />
+                </div>
+            </div>
+            <div className={styles.container()}>
+                <div className={styles.surah()}>
+                    <span>Keterangan</span>
+                    <Input value={keterangan} onChange={(val) => setKeterangan(val.target.value)}/>
                 </div>
             </div>
             {/* <ButtonSessionForm onClick={() => data?.id_hafalan ? edit() : add()} /> */}
